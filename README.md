@@ -1,5 +1,7 @@
 # TyphoonLLM Online
 
+**Known serious issue:** the search planner can carry an old conversation topic into an unrelated request, retrieve the wrong document, and derail the answer. This experimental source is under audit; 00.14 has no published binary release. See [the audit](validation/GENERAL.md).
+
 Experimental web-assisted local LLM chat for a homebrew-capable PlayStation Vita. The Vita runs LFM2.5-230M locally; a trusted LAN companion retrieves public documents. No cloud model, search API key or paid search account is required.
 
 This is a separate app (VLMNET001) from offline TyphoonLLM (VLMCHAT01). Candidate version: 00.14. Model weights and tokenizer are unchanged. This is application/runtime work, not new model training.
@@ -38,3 +40,4 @@ The model context is 512 tokens including the answer reserve. Reference material
 Fixed instruction prefixes cache attention KV and all recurrent convolution state. Private search planning checkpoints and restores live chat state. Planning adds memory and latency. Intermediate prompt vocabulary projections are skipped when their scores would be discarded; final prompt and every generated token retain full scoring. No clock override is applied.
 
 The small model can hallucinate, copy sources, omit steps or answer irrelevantly even with correct evidence. Internet access does not fix those model limitations. No semantic correctness guarantee is made. See MODEL_AND_PROVENANCE.md, THIRD_PARTY_NOTICES.md and LICENSE_NOTES.md. No blanket project license is invented.
+
