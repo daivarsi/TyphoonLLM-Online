@@ -1,6 +1,10 @@
 # TyphoonLLM Online
 
-**Experimental 00.18 — known answer-quality failures; not a reliable factual assistant.** The Vita generates every answer locally. A trusted-LAN companion decides whether the requested action needs research, retrieves documents when appropriate, and supplies optional source text. The 230M answer model can still ignore evidence or invent details. See [STATUS.md](STATUS.md) for separate implementation, automated-test and physical-validation results. Historical failures remain in [the previous audit](validation/GENERAL.md).
+**Experimental technology demo. Known answer-quality failures remain.** Six new multi-step device tests produced **0/6 complete passes**. Answers can contain wrong arithmetic, omit instructions, or contradict supplied sources. The later companion routing fix did not correct the budget answer or demonstrate a faster full response. See [current status](STATUS.md), [the six-task report](validation/MULTISTEP-00.18.md), and [the follow-up](validation/COMPANION-FOLLOWUP.md).
+
+[Download experimental bundle 00.18.1](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.18.1). **The Vita app remains 00.18.** Bundle 00.18.1 contains the updated PC companion and documentation plus the byte-identical verified 00.18 VPK. Existing 00.18 users only need to update the companion. The original 00.18 release remains available as a historical snapshot.
+
+The Vita generates every answer locally. The trusted-LAN PC companion classifies requests, retrieves documents, and supplies optional source text. It never generates chatbot answers. This is useful for experimenting with the pipeline; it is not a dependable factual or reasoning assistant.
 
 ## One answer pipeline
 
@@ -15,20 +19,13 @@ The client allows 45 seconds for lookup. The companion allows up to 35 seconds o
 
 The 512-token context reserves space for a complete concise response and evicts whole old turns when necessary. Exact reference reuse requires the source text to remain in retained history. New Chat clears dialogue and reference state and resets companion caches; old in-flight results cannot refill the current result/document cache.
 
-## Install
+## Install or update
 
-The online app uses **VLMNET001** and is separate from offline **VLMCHAT01**. Model weights, tokenizer and clock settings on the Vita are unchanged.
+Follow [INSTALL.md](INSTALL.md) for exact Windows setup commands, pinned asset downloads, hash checks, connection setup and update instructions. Start from the source archive in the **same 00.18.1 bundle**, rather than the older 00.18 source archive.
 
-1. Install the online VPK with VitaShell after verifying title ID VLMNET001.
-2. Reuse the unchanged model assets described by [offline TyphoonLLM](https://github.com/daivarsi/TyphoonLLM). Keep the existing `ux0:data/VitaLMChat/model.vlp`, `tokenizer.bin` and model license. Vita weights are not bundled.
-3. On the PC, create a Python 3.12 virtual environment and run `python -m pip install -r retrieval_service/requirements.txt`.
-4. Run `python setup-intent.py` and `python setup-relevance.py`. These download the pinned PC classifier (about 739 MB) and ranker (about 23 MB), and verify every downloaded file's SHA-256. They use the same ONNX runtime and do not execute downloaded Python code.
-5. Run `python run-service.py --bind <PC_LAN_IP> --allow-ip <VITA_LAN_IP>`.
-6. Put the PC's private IPv4 address in `ux0:data/TyphoonOnline/host.txt`. Allow TCP 28500 on the trusted private network if required and keep the companion running.
+The online app uses **VLMNET001** and existing model data under `ux0:data/VitaLMChat`. It is separate from offline **VLMCHAT01**. This update leaves the Vita executable, weights, tokenizer and clock settings unchanged. Triangle toggles web access; connectivity indicators do not certify answer quality.
 
-Update client and companion together. Triangle toggles web access. The connectivity indicator does not certify source or answer quality.
-
-The protocol uses a peer IP allowlist, not cryptographic authentication or encryption. Use a trusted LAN and do not forward the port. User research queries are sent to public source providers; local-intent requests are classified on the PC without fetching web content.
+The protocol uses a peer IP allowlist, not cryptographic authentication or encryption. Use a trusted LAN and do not forward TCP 28500. Research queries are sent to public source providers. Local-intent requests are classified on the PC without fetching web content.
 
 ## Build and validate
 

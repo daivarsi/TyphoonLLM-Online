@@ -1,27 +1,31 @@
-# 00.18 validation status
+# Current validation status
+
+**Experimental. Answer quality remains unresolved.** Bundle 00.18.1 updates the companion and documentation; the installed Vita app remains 00.18.
 
 ## Source implementation
 
-The companion performs pretrained action classification before any source lookup. Source ranking remains separate. The unreliable free-form local planner and its experimental decoding constraints were removed. All answer generation remains on the Vita. Lookup deadlines are 45 seconds client / 35 seconds companion. Full-response reservation, complete-turn eviction, reference reuse and one echo retry remain in place. New Chat invalidates in-flight source results.
+The PC companion classifies the action, optionally retrieves documents, and supplies reference text to local Vita generation. The latest patch adds a confidence-gated calculation/deduction category and removes duplicate ranking of the previous source. The generation prompt, runtime and weights are unchanged. Lookup limits remain 45 seconds client / 35 seconds companion. The companion never writes answers.
 
-## Local automated tests
+## Local automated checks
 
-59 host tests pass, including bounds, fragmentation, truncated requests, peer allowlist rejection, intent gating without fetching, and in-flight reset isolation. Native tests pass: 24 evidence-boundary controls, 10 reference-history controls, 6 echo controls and 5 actual-session completion controls. VitaSDK compilation succeeds with existing style/truncation warnings. Compilation is not physical validation. The protocol has no cryptographic authentication.
+- 62 host checks pass, covering protocol bounds, fragmentation, truncated requests, IP allowlist rejection, cache isolation, no-fetch routing, weak deduction confidence and repeated ranking.
+- Native 00.18 checks passed: 24 evidence-boundary, 10 reference-history, 6 echo and 5 actual-session completion controls. The native code has not changed since those checks and the successful VitaSDK build.
+- The prior 16 intent regressions pass. The expanded classifier evaluation matches 33/36 expectations; event ordering, a timed-departure question and a social acknowledgment still route unnecessarily to research. [All cases](validation/companion-routing-evaluation.json).
 
-The actual intent model passed 22 action-classification probes, including separately worded creative requests and factual questions about fiction. This is a limited evaluation, not a guarantee for arbitrary inputs.
+These checks do not establish answer quality or physical performance. The wire protocol has no cryptographic authentication. Build warnings and source-provenance limitations remain documented.
 
-## Physical validation
+## Physical hardware validation
 
-The 00.18 continuous-chat run and three same-chat diagnostic retests are complete. See [the per-case report](validation/ONLINE-00.18.md). Original writing fetched no source text and produced a complete poem. Character identity and the weapon follow-up were correct. Before the companion ranking correction, the mushroom topic switch and washing follow-up failed retrieval and produced incorrect local answers; the local scrambled-egg recipe was also incorrect. The Python file-reading example was complete and valid by inspection. The general ranking correction subsequently selected relevant mushroom-storage text and a complete recipe in live PC probes. A same-chat physical storage retest received the correct source tokens but contradicted their explicit instruction against airtight containers. The autumn-leaf answer likewise reversed the pigment-masking relationship despite correct source input. The alien-theories lookup reached its deadline and local generation invented or misapplied theories. These are answer-quality failures, not transport successes. Earlier 00.17 interrupted runs failed intent recognition and are not counted as successful validation. No test questions are separated by New Chat or CLEAR.
+| Evaluation | Result |
+| --- | --- |
+| [Original continuous-chat run](validation/ONLINE-00.18.md) | Original writing, identity and weapon cases succeeded; storage, washing, recipe, hypotheses and source interpretation had failures. |
+| [Six new multi-step tasks](validation/MULTISTEP-00.18.md) | 0/6 complete passes. Wrong calculations, incorrect priorities, missing steps and unsupported explanations. |
+| [Companion follow-up](validation/COMPANION-FOLLOWUP.md) | Budget routing became local with no fetched text, but its answer remained wrong. A new capacitor answer was correct locally after retrieval failed. |
 
-The corrected recipe retest completed with source ingredients and a shortened stovetop procedure, but omitted some steps. The build remains experimental with demonstrated answer-quality failures.
+The budget routing stage changed from a 35-second failed lookup to a 1.843-second local decision. **That is not full response time.** The retest took 68.538 seconds overall, versus about 58 seconds in the earlier conversation state. Different prefill/history work prevents claiming an end-to-end speedup.
 
-Full VitaShell installation verified: VLMNET001 version 00.18. Installed metadata and executable match the VPK byte-for-byte; hashes are in [installed-00.18.json](validation/installed-00.18.json). This is the same executable used in the physical run.
+No New Chat/CLEAR separated test questions. Displayed answers were checked against emitted token IDs; private conversation traces are not published. Full VitaShell installation was verified as VLMNET001 version 00.18, with executable and metadata matching the released VPK byte-for-byte. [Installation hashes](validation/installed-00.18.json).
 
-## Companion follow-up after 00.18
+## Release scope
 
-The Vita binary, weights, tokenizer and generation prompt remain unchanged. The companion adds a general calculation/deduction action with a positive binary-entailment requirement and ranks prior-source passages only once, together with current sources. Cache policy is advanced to avoid replaying responses from the previous routing policy.
-
-62 host tests pass, including the new weak-confidence and duplicate-ranking controls. The existing 16 intent regressions pass. An expanded 36-case action check matches 33 expectations; event ordering, a timed-departure question, and a social acknowledgment still trigger unnecessary research. See [the full routing evaluation](validation/companion-routing-evaluation.json). This is a limited classifier evaluation, not answer-quality validation.
-
-A same-chat physical budget retest returned the local-task decision in 1.843 seconds with zero fetched source bytes, versus a 35-second failed lookup before this patch. The generated budget answer remains incorrect. A new capacitor control retained research routing but failed to retrieve evidence; its local answer was correct. Both completed at EOS and matched actual token IDs. See [the companion follow-up report](validation/COMPANION-FOLLOWUP.md). No chat reset or app restart separated these checks from the prior conversation.
+Publish as an experimental demo with these limits visible. Further routing/prompt tuning is paused. A future quality investigation should establish a trusted model/runtime baseline before adding heuristics or features; that comparison has not been completed. The older [00.14 audit](validation/GENERAL.md) remains historical evidence.

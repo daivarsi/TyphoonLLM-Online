@@ -1,0 +1,148 @@
+[
+  {
+    "case": 1,
+    "label": "dependencies",
+    "prompt": "A print takes twenty minutes and packing takes ten after printing pickup is at noon work backward to give both start times then name the dependency",
+    "answer": "The dependency is \"printing pickup is at noon work backward.\"",
+    "outcome": "Fail",
+    "criterion_results": [
+      {
+        "criterion": "Print starts 11:30",
+        "met": false
+      },
+      {
+        "criterion": "Packing starts 11:50",
+        "met": false
+      },
+      {
+        "criterion": "Packing depends on printing finishing",
+        "met": false
+      }
+    ],
+    "reason": "Omitted both start times and quoted a fragment instead of identifying the dependency.",
+    "expected": "Print at 11:30 AM, pack at 11:50 AM. Packing depends on printing finishing."
+  },
+  {
+    "case": 2,
+    "label": "budget",
+    "prompt": "I have forty dollars notebooks cost six each and pens cost two each buy four notebooks and five pens calculate the total and change then say whether one more notebook fits",
+    "answer": "The total cost is 240 dollars. One more notebook fits.",
+    "outcome": "Fail",
+    "criterion_results": [
+      {
+        "criterion": "Total 34",
+        "met": false
+      },
+      {
+        "criterion": "Change 6",
+        "met": false
+      },
+      {
+        "criterion": "One more notebook fits exactly",
+        "met": true
+      }
+    ],
+    "reason": "Said 240 dollars and omitted change. The extra-notebook conclusion happens to be correct but conflicts with its own total.",
+    "expected": "4 times 6 plus 5 times 2 is 34 dollars. Change is 6 dollars, so another notebook fits exactly."
+  },
+  {
+    "case": 3,
+    "label": "triage",
+    "prompt": "A team has a login outage a spelling error and a feature request. Rank them by urgency. Then explain the first choice and give its first investigation step.",
+    "answer": "Ranking by urgency: **Spelling error** (high priority). First investigation step: **Check for spelling errors** to resolve the issue before proceeding.",
+    "outcome": "Fail",
+    "criterion_results": [
+      {
+        "criterion": "Login outage first",
+        "met": false
+      },
+      {
+        "criterion": "All three ranked",
+        "met": false
+      },
+      {
+        "criterion": "Reason based on blocked access",
+        "met": false
+      },
+      {
+        "criterion": "Useful investigation step",
+        "met": false
+      }
+    ],
+    "reason": "Prioritized a spelling error, did not rank all three items, and gave a circular investigation step.",
+    "expected": "Prioritize the login outage because it blocks access; check scope, authentication errors and recent changes. The relative priority of the other two depends on impact."
+  },
+  {
+    "case": 4,
+    "label": "argument",
+    "prompt": "A shop sold more umbrellas on rainy days. The owner says umbrellas cause rain. Identify the reasoning error give another explanation and suggest a fair test.",
+    "answer": "Reasoning error: **Assuming umbrellas cause rain** (misidentification). Fair test: **Observe the shop's behavior** (e.g., check if umbrellas are used during rainy days) to confirm if the error is due to a misunderstanding or a different cause.",
+    "outcome": "Partial; full task failed",
+    "criterion_results": [
+      {
+        "criterion": "Correlation versus causation or reversed direction",
+        "met": false
+      },
+      {
+        "criterion": "Rain drives umbrella purchases",
+        "met": false
+      },
+      {
+        "criterion": "Test separates cause or uses control/comparison",
+        "met": false
+      }
+    ],
+    "reason": "Flagged the causal claim as mistaken but did not explain correlation versus causation, supply the rain-driven-demand explanation, or propose a useful causal comparison.",
+    "expected": "Rain can increase umbrella demand. Compare conditions while accounting for weather and temporal order; merely re-observing umbrellas during rain repeats the correlation."
+  },
+  {
+    "case": 5,
+    "label": "formats",
+    "prompt": "Compare epub and pdf for reading on a small screen. Explain one strength of each. Then choose one for a novel and one for a page layout that must stay exact.",
+    "answer": "**Strengths of epub vs. pdf:**  \n- **epub**: Faster loading times, better for quick access to large files, and easier to share with others.  \n- **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.  \n\n**Choice for a novel:** **epub** (faster, easier sharing, and better for quick access).  \n\n**Choice for a page layout:** **pdf** (compact, efficient for detailed content).",
+    "outcome": "Partial; full task failed",
+    "criterion_results": [
+      {
+        "criterion": "EPUB reflow advantage",
+        "met": false
+      },
+      {
+        "criterion": "PDF fixed layout advantage",
+        "met": false
+      },
+      {
+        "criterion": "EPUB for novel",
+        "met": true
+      },
+      {
+        "criterion": "PDF exact layout",
+        "met": true
+      }
+    ],
+    "reason": "Chose EPUB for the novel and PDF for exact layout, but used unsupported speed, sharing and file-size claims rather than reflow and layout preservation.",
+    "expected": "Reflowable EPUB adapts text to screen and font size; PDF preserves page layout. EPUB also supports fixed-layout books."
+  },
+  {
+    "case": 6,
+    "label": "constraint_followup",
+    "prompt": "Now the reader needs very large text without scrolling sideways. Revise the novel recommendation and explain the tradeoff for the exact layout document.",
+    "answer": "**Strengths of epub vs. pdf:**  \n- **epub**: Faster loading times, better for quick access to large files, and easier to share with others.  \n- **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.  \n\n**Tradeoff for exact layout document:** **pdf** (compact, efficient for detailed content).  \n\nThis recommendation prioritizes speed and ease of sharing, while the exact layout ensures precision and reduced file size, making it better suited for detailed or print-ready materials.",
+    "outcome": "Fail",
+    "criterion_results": [
+      {
+        "criterion": "Retains document-format context",
+        "met": true
+      },
+      {
+        "criterion": "EPUB reflow and larger text",
+        "met": false
+      },
+      {
+        "criterion": "PDF fixed layout may require zoom/pan or reflow sacrifices layout",
+        "met": false
+      }
+    ],
+    "reason": "Retained the document-format subject but repeated the previous rationale and ignored the large-text/no-sideways-scroll constraint.",
+    "expected": "Use reflowable EPUB for large text in the novel. Exact-layout pages may require zooming and panning; reader-supported PDF reflow can help reading but changes the visual layout."
+  }
+]
