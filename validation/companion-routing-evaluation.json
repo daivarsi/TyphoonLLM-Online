@@ -1,0 +1,186 @@
+{
+  "total": 36,
+  "matched": 33,
+  "cases": [
+    {
+      "request": "Compose a haiku about an empty railway station.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Make up a bedtime adventure featuring a tiny submarine.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Tell me about the poem Ozymandias.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Give me a recipe for lentil soup.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Write a sonnet using researched facts about Saturn.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Explain why Sherlock Holmes is so well known.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Which book introduced Bilbo Baggins?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Create a limerick about a sleepy astronomer.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Imagine a conversation between the wind and a mountain.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "What is the difference between a comet and an asteroid?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "How can I sew a loose button back onto a shirt?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Please make this clearer: The thing was done by us.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Hello, nice to meet you.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Invent an imaginary island and describe its strange customs.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Who wrote The Hobbit?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Find real examples of bioluminescence for my fantasy setting.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "A parcel weighs 3 kg. Each box holds 2 kg. How many boxes are needed?",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Put these events in order: checkout, choose an item, receive the parcel.",
+      "research": false,
+      "actual": true
+    },
+    {
+      "request": "The train leaves at 16:20. Walking takes 15 minutes. When must I leave?",
+      "research": false,
+      "actual": true
+    },
+    {
+      "request": "All red tiles are square. This tile is red. What follows?",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Rewrite this politely: send the invoice now.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Invent a name for a bakery and explain your choice.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Who invented the printing press?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Explain how solar panels generate electricity.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "What is EPUB and how does it differ from PDF?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Find the latest release notes for Firefox.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "How do I repair a slipping bicycle chain?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Research old sailing ships for my novel.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "What was her first book?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Which one is larger?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Summarize that in two bullets.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Now make the second option cheaper.",
+      "research": false,
+      "actual": false
+    },
+    {
+      "request": "Can it handle larger files?",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "Thank you for the explanation.",
+      "research": false,
+      "actual": true
+    },
+    {
+      "request": "Compare oak and pine for a bookshelf.",
+      "research": true,
+      "actual": true
+    },
+    {
+      "request": "If two workers paint 8 walls in a day, what is their average per worker?",
+      "research": false,
+      "actual": false
+    }
+  ]
+}

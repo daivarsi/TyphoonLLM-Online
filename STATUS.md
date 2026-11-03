@@ -17,3 +17,11 @@ The 00.18 continuous-chat run and three same-chat diagnostic retests are complet
 The corrected recipe retest completed with source ingredients and a shortened stovetop procedure, but omitted some steps. The build remains experimental with demonstrated answer-quality failures.
 
 Full VitaShell installation verified: VLMNET001 version 00.18. Installed metadata and executable match the VPK byte-for-byte; hashes are in [installed-00.18.json](validation/installed-00.18.json). This is the same executable used in the physical run.
+
+## Companion follow-up after 00.18
+
+The Vita binary, weights, tokenizer and generation prompt remain unchanged. The companion adds a general calculation/deduction action with a positive binary-entailment requirement and ranks prior-source passages only once, together with current sources. Cache policy is advanced to avoid replaying responses from the previous routing policy.
+
+62 host tests pass, including the new weak-confidence and duplicate-ranking controls. The existing 16 intent regressions pass. An expanded 36-case action check matches 33 expectations; event ordering, a timed-departure question, and a social acknowledgment still trigger unnecessary research. See [the full routing evaluation](validation/companion-routing-evaluation.json). This is a limited classifier evaluation, not answer-quality validation.
+
+A same-chat physical budget retest returned the local-task decision in 1.843 seconds with zero fetched source bytes, versus a 35-second failed lookup before this patch. The generated budget answer remains incorrect. A new capacitor control retained research routing but failed to retrieve evidence; its local answer was correct. Both completed at EOS and matched actual token IDs. See [the companion follow-up report](validation/COMPANION-FOLLOWUP.md). No chat reset or app restart separated these checks from the prior conversation.

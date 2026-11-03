@@ -125,3 +125,12 @@ class DocumentSelectionRegressionTests(unittest.TestCase):
   p=SemanticProvider(ranker)
   self.assertEqual(p.select('A new subject request','Old topic',[old,new]).source,new.source)
   ranker.rank.assert_called_once_with('A new subject request','Old topic',[new])
+
+class PriorSourceWorkRegressionTests(unittest.TestCase):
+ def test_prior_source_is_not_ranked_before_current_sources_arrive(self):
+  backend=Mock();backend.tls=None;backend.local=threading.local();backend.cache_epoch=0
+  backend.api.return_value={'query':{'pages':{'1':{'title':'Fixture','extract':'A complete document with useful reference information.'}}}}
+  p=SemanticProvider(RecordingRanker(),backend);p.search.search=Mock(return_value=[])
+  p.select=Mock(wraps=p.select)
+  self.assertEqual(p.fetch_context('An independent current request','An independent current request','Earlier topic').status,OK)
+  self.assertEqual(p.select.call_count,1)

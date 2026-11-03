@@ -116,19 +116,16 @@ class SemanticProvider(GeneralProvider):
             for r in rows:
                 key=(r.source,r.evidence)
                 if key not in seen:seen.add(key);candidates.append(r)
-        # Try the known source first. It must still pass current-message
-        # relevance, so a topic switch can proceed to independent search.
+        # Collect the prior source for follow-ups, but rank all documents once
+        # after collecting current-request sources. Eager prior-source ranking
+        # repeated expensive irrelevant work before every topic change.
         if topic:
             with self.document_lock:
                 previous=[r for fetched,rows in self.documents.values() if time.monotonic()-fetched<3600 for r in rows if r.title==topic]
             add(previous)
-            selected=self.select(message,topic,candidates)
-            if selected:return selected
             try:
                 add([r for p in self.wiki_pages(topic,full=True) for r in self.wiki_candidates(p)])
                 expanded.add(topic)
-                selected=self.select(message,topic,candidates)
-                if selected:return selected
             except (OSError,ValueError,KeyError,TypeError) as e:errors.append(type(e).__name__)
         # Original request has priority over a potentially stale model rewrite.
         tasks=list(dict.fromkeys([(compact_query(message),True),(compact_query(suggestion),True)]))

@@ -12,6 +12,7 @@ class SemanticIntent:
         'The user wants to rewrite, translate, or summarize content they supplied.',
         'The user wants a social exchange rather than information or content creation.',
         'The user wants to research or verify information, including for a writing task.',
+        'The user supplies numerical values or explicit premises and asks to calculate a result or make a logical deduction from them.',
     )
     def __init__(self,directory):
         directory=Path(directory);config=json.loads((directory/'config.json').read_text(encoding='utf-8'))
@@ -27,6 +28,11 @@ class SemanticIntent:
             batch=self.tokenizer.encode_batch([(message,h) for h in self.hypotheses])
             attributes={'input_ids':'ids','attention_mask':'attention_mask','token_type_ids':'type_ids'}
             inputs={i.name:np.asarray([getattr(e,attributes[i.name]) for e in batch],dtype=np.int64) for i in self.model.get_inputs()}
-            scores=self.model.run(None,inputs)[0][:,self.entailment]
+            logits=self.model.run(None,inputs)[0]
+            scores=logits[:,self.entailment]
         choice=int(np.argmax(scores))
+        # A new deduction category must have positive binary entailment, not
+        # merely be the least-negative label for an underspecified follow-up.
+        if choice==5 and logits[5,self.entailment]<=logits[5,1-self.entailment]:
+            choice=int(np.argmax(scores[:5]))
         return choice in (0,4)
