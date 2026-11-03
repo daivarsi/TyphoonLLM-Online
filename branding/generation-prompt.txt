@@ -1,0 +1,2 @@
+Use case: text-localization. Edit target: the attached existing PS Vita LiveArea banner. Preserve the entire dark navy storm illustration, typography styling, layout, colors, spacing and dimensions (840 by 500). Replace ONLY the subtitle 'Offline chat & calculation' with the exact text 'Online-assisted chat & calculation'. Keep the title 'TyphoonLLM' unchanged. No green connection dot in this static banner; status is shown dynamically inside the app. Do not add any other text or graphics.
+Mode: built-in image_gen; final platform asset resized to 840x500.

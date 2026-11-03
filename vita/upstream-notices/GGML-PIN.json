@@ -1,0 +1,23 @@
+{
+  "repository": "https://github.com/ggml-org/llama.cpp",
+  "commit": "d05706b4f32a545814856e98ca518292585443b9",
+  "retrieved_utc": "2026-10-27T23:36:04.123318+00:00",
+  "files": {
+    "ggml/src/ggml-quants.c": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/d05706b4f32a545814856e98ca518292585443b9/ggml/src/ggml-quants.c",
+      "sha256": "5574a2dccf7c07e75b143733e04a5412d3d8c819e7945f5217a7b83a2b2ff8ab",
+      "bytes": 226847
+    },
+    "ggml/src/ggml-common.h": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/d05706b4f32a545814856e98ca518292585443b9/ggml/src/ggml-common.h",
+      "sha256": "0061131b615c5721fc88a78feeb22c1f8c450f1c2646a317d80796a653bf595c",
+      "bytes": 135161
+    },
+    "LICENSE": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/d05706b4f32a545814856e98ca518292585443b9/LICENSE",
+      "sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d",
+      "bytes": 1078
+    }
+  },
+  "use": "Q4_0 block layout and reference quantization algorithm; independent NumPy converter and Vita kernels"
+}

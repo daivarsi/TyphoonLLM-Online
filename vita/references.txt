@@ -1,0 +1,7 @@
+# Offline reference provenance
+
+Country/capital facts: GeoNames, https://www.geonames.org/, Creative Commons Attribution 4.0, https://creativecommons.org/licenses/by/4.0/. Adaptations: selected fields, ASCII normalization, excluded ambiguous/multi-capital records. Country records are not assertions about sovereignty.
+
+Element names/symbols/numbers: PubChem/NCBI US federal public factual data, source and retrieval hashes in SOURCES.json. No third-party descriptions or images included.
+
+Short astronomy/water/history/SI entries are locally authored factual summaries, with primary provenance stored per entry. NASA/USGS/National Archives are US government sources; Antarctic Treaty and BIPM are cited for facts, no prose is copied wholesale. The database is a dated offline snapshot, not live geopolitical advice. Evaluation prompts/answer labels were not imported.

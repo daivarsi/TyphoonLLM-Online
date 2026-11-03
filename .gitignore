@@ -1,0 +1,12 @@
+build*/
+__pycache__/
+*.pyc
+.venv/
+*.log
+*.jsonl
+*cache.json
+host.txt
+mode.bin
+model.vlp
+tokenizer.bin
+*.vpk

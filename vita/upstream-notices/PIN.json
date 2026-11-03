@@ -1,0 +1,5 @@
+{
+  "repository": "https://github.com/LuckyI13I/WoozyLLM",
+  "commit": "b0d858c4de00745f84fef202979932867447e4e1",
+  "notice": "No top-level upstream LICENSE. See SOURCE_PROVENANCE.md. CPU harness does not link ImGui or embedded fonts."
+}
