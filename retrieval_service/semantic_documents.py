@@ -103,7 +103,16 @@ class SemanticProvider(GeneralProvider):
             ranked=self.ranker.rank(message,topic,documents[i][:128])
             if ranked:
                 score,result=ranked[0]
-                return dataclasses.replace(result,error='semantic relevance='+str(round(score,3)))
+                # Preserve the selected document's identity/context alongside a
+                # highly relevant detail. One isolated sentence can answer only
+                # half a request or leave a pronoun/attribute without its subject.
+                # Both units remain verbatim; never splice or clip source prose.
+                lead=documents[i][0].evidence
+                evidence=result.evidence
+                combined=lead+'\n\n'+evidence
+                if lead!=evidence and len(combined.encode('utf-8'))<=850:
+                    evidence=combined
+                return dataclasses.replace(result,evidence=evidence,error='semantic relevance='+str(round(score,3)))
         return None
 
     def collect(self,message,suggestion,topic=''):

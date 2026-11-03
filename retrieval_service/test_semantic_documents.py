@@ -134,3 +134,26 @@ class PriorSourceWorkRegressionTests(unittest.TestCase):
   p.select=Mock(wraps=p.select)
   self.assertEqual(p.fetch_context('An independent current request','An independent current request','Earlier topic').status,OK)
   self.assertEqual(p.select.call_count,1)
+
+
+class ContextPackingTests(unittest.TestCase):
+ def test_detail_retains_its_own_document_lead(self):
+  lead=Result(OK,'Aster','https://example.org/aster','Aster is a fictional navigator in a published novel.')
+  detail=Result(OK,'Aster',lead.source,'Its instrument is a silver compass.')
+  other=Result(OK,'Other','https://example.org/other','An unrelated document must not enter the evidence.')
+  ranker=Mock();ranker.scores.return_value=[8,1];ranker.rank.return_value=[(8,detail)]
+  result=SemanticProvider(ranker).select('Describe the subject and its equipment','',[lead,detail,other])
+  self.assertEqual(result.evidence,lead.evidence+'\n\n'+detail.evidence)
+  self.assertEqual(result.source,lead.source)
+  self.assertNotIn(other.evidence,result.evidence)
+ def test_context_never_clips_selected_unit_or_exceeds_utf8_budget(self):
+  lead=Result(OK,'Aster','https://example.org/aster','é'*400+'.')
+  detail=Result(OK,'Aster',lead.source,'A complete relevant sentence that must remain intact.')
+  ranker=Mock();ranker.scores.return_value=[8];ranker.rank.return_value=[(8,detail)]
+  result=SemanticProvider(ranker).select('A request','',[lead,detail])
+  self.assertEqual(result.evidence,detail.evidence)
+  self.assertLessEqual(len(result.evidence.encode('utf-8')),850)
+ def test_lead_is_not_duplicated_when_it_is_already_the_best_passage(self):
+  lead=Result(OK,'Aster','https://example.org/aster','Aster is a fictional navigator in a published novel.')
+  ranker=Mock();ranker.scores.return_value=[8];ranker.rank.return_value=[(8,lead)]
+  self.assertEqual(SemanticProvider(ranker).select('Identity','',[lead]).evidence,lead.evidence)

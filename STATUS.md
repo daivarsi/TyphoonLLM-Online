@@ -1,32 +1,31 @@
 # Current validation status
 
-**Experimental. Answer quality remains unresolved.** Version 00.19 separates model storage and distribution from offline TyphoonLLM and labels the app explicitly. Generation and companion behavior remain unchanged.
+**Experimental. Version 00.20 fixes the demonstrated weak-intent routing and prior-generated-answer feedback in the tested Cloud cases. General answer quality remains limited.**
 
 ## Source implementation
 
-The PC companion classifies the action, optionally retrieves documents, and supplies reference text to local Vita generation. The latest patch adds a confidence-gated calculation/deduction category and removes duplicate ranking of the previous source. The generation prompt, runtime and weights are unchanged. Lookup limits remain 45 seconds client / 35 seconds companion. The companion never writes answers.
+The companion supplies retrieved source text; the Vita generates every answer. Local intent requires positive binary entailment support. Evidence selection preserves bounded document context with a relevant detail. Sourced inference retains user/reference context but excludes historical generated assistant claims; the canonical conversation is preserved. Local tasks retain ordinary conversation history. Models, weights, tokenizer and clock policy are unchanged. Online remains a separate app and repository with independent data/downloads.
 
 ## Local automated checks
 
-- 62 host checks pass, covering protocol bounds, fragmentation, truncated requests, IP allowlist rejection, cache isolation, no-fetch routing, weak deduction confidence and repeated ranking.
-- Native controls were rerun successfully for 00.19: 24 evidence-boundary, 10 reference-history, 6 echo and 5 actual-session completion controls. The 00.19 native changes are model paths, visible title and package metadata; see [separation validation](validation/SEPARATION-00.19.md).
-- The prior 16 intent regressions pass. The expanded classifier evaluation matches 33/36 expectations; event ordering, a timed-departure question and a social acknowledgment still route unnecessarily to research. [All cases](validation/companion-routing-evaluation.json).
+- 68 host tests passed, covering protocol bounds, fragmentation, truncation, peer access, cache behavior, routing and evidence packing.
+- 45 existing native controls plus the new source-history filtering/commit/continuation/bounds suite passed. VitaSDK build completed with warnings.
+- 44/47 routing regression cases matched expectations; three ambiguous reasoning/revision cases still search unnecessarily. Three additional controls routed as expected. This is not a blind benchmark.
 
-These checks do not establish answer quality or physical performance. The wire protocol has no cryptographic authentication. Build warnings and source-provenance limitations remain documented.
+These checks do not establish answer accuracy. [Full 00.20 report](validation/ONLINE-00.20.md).
 
 ## Physical hardware validation
 
 | Evaluation | Result |
 | --- | --- |
-| [00.19 separate installation](validation/SEPARATION-00.19.md) | Own model path and installed package verified on Vita; one generation completed with matching token/display text, but missed the requested two-sentence format. |
-| [Original continuous-chat run](validation/ONLINE-00.18.md) | Original writing, identity and weapon cases succeeded; storage, washing, recipe, hypotheses and source interpretation had failures. |
-| [Six new multi-step tasks](validation/MULTISTEP-00.18.md) | 0/6 complete passes. Wrong calculations, incorrect priorities, missing steps and unsupported explanations. |
-| [Companion follow-up](validation/COMPANION-FOLLOWUP.md) | Budget routing became local with no fetched text, but its answer remained wrong. A new capacitor answer was correct locally after retrieval failed. |
+| [00.20 continuous chat](validation/ONLINE-00.20.md) | False offline Cloud identity corrected using fetched context; Buster Sword follow-up succeeded. Unrelated Ada identity used relevant evidence but lost a qualifier. Original poem and cheerful rewrite stayed local. All six outputs matched emitted tokens. |
+| [00.19 separation](validation/SEPARATION-00.19.md) | Independent model path and installation verified. Generation completed but missed a two-sentence instruction. |
+| [00.18 source/conversation tests](validation/ONLINE-00.18.md) | Mixed successes and failures, including contradiction of supplied sources. |
+| [00.18 six multi-step tasks](validation/MULTISTEP-00.18.md) | 0/6 complete passes. Wrong arithmetic, priorities, missing steps and unsupported explanations. |
+| [Earlier companion follow-up](validation/COMPANION-FOLLOWUP.md) | Budget routing became local but the answer remained wrong. |
 
-The budget routing stage changed from a 35-second failed lookup to a 1.843-second local decision. **That is not full response time.** The retest took 68.538 seconds overall, versus about 58 seconds in the earlier conversation state. Different prefill/history work prevents claiming an end-to-end speedup.
+The installed 00.20 metadata and executable match its VPK byte-for-byte: [verification](validation/installed-00.20.json). No New Chat/CLEAR separated the six 00.20 prompts. Private logs are not published; sanitized results and screenshots are included.
 
-No New Chat/CLEAR separated test questions. Displayed answers were checked against emitted token IDs; private conversation traces are not published. The earlier full VitaShell installation was verified as VLMNET001 version 00.18, with executable and metadata matching the released VPK byte-for-byte. [Installation hashes](validation/installed-00.18.json).
+## Remaining limits
 
-## Release scope
-
-Publish as an experimental demo with these limits visible. Further routing/prompt tuning is paused. A future quality investigation should establish a trusted model/runtime baseline before adding heuristics or features; that comparison has not been completed. The older [00.14 audit](validation/GENERAL.md) remains historical evidence.
+No broad answer-quality or speed claim is made. The earlier reduction from 35 seconds to 1.843 seconds measured only a routing stage; that earlier full answer took longer and remained incorrect. Source-grounded answers can still lose qualifications or omit requested parts. A trusted independent model/runtime baseline remains future work.

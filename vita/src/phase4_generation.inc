@@ -4,6 +4,8 @@
 #include "session.h"
 #include "evidence_pack.h"
 #include "reply_policy.h"
+#include "source_history.h"
+static int s_source_input_n,s_source_ledger_n;
 static int s_reply_limit=REPLY_TOKEN_LIMIT,s_reply_total;
 static int s_evidence_pack=1;
 #include <ctype.h>
@@ -47,7 +49,13 @@ static void base_ledger(void){char base[1024];
 }
 static int evict_turn(void){if(s_turn_count<1)return 0;int next=s_turn_count>1?s_turn_offsets[1]:s_ledger_n,drop=next-s_base_n;if(drop<=0)return 0;memmove(s_ledger+s_base_n,s_ledger+next,(s_ledger_n-next)*sizeof(int));s_ledger_n-=drop;for(int i=1;i<s_turn_count;i++)s_turn_offsets[i-1]=s_turn_offsets[i]-drop;s_turn_count--;s_evictions++;return 1;}
 static void commit_response(void){
- if(!strcmp(s_path_name,"neural")){s_ledger_n=s_session.pos;memcpy(s_ledger,s_session.fed,s_ledger_n*sizeof(int));}
+ if(!strcmp(s_path_name,"neural")){
+  if(s_source_input_n){
+   int n=source_history_commit(s_ledger,512,s_source_ledger_n,s_session.fed,s_session.pos,s_source_input_n);
+   if(n<0){s_session.reason=END_ERROR;dbg_log("SOURCE_HISTORY_COMMIT bounds failure");return;}
+   s_ledger_n=n;
+  }else{s_ledger_n=s_session.pos;memcpy(s_ledger,s_session.fed,s_ledger_n*sizeof(int));}
+ }
  int close[16],n=encode_bounded("<|im_end|>\n",close);if(s_ledger_n+n<=512){memcpy(s_ledger+s_ledger_n,close,n*sizeof(int));s_ledger_n+=n;}
 }
 #include "reference_history.h"
@@ -81,7 +89,7 @@ static void phase4_generate(const char*prompt){
    s_before_reference.n=s_ledger_n;s_before_reference.turns=s_turn_count;s_before_reference.base=s_base_n;s_before_reference.multi=s_last_multi;s_before_reference.policy=s_last_policy;
    snprintf(s_before_reference.topic,sizeof(s_before_reference.topic),"%s",online_context_topic());snprintf(s_before_reference.facts,sizeof(s_before_reference.facts),"%s",online_reference_notes());
   }
-  RetrievalResult retrieved={0};s_online_used=0;s_online_inference_at=0;
+  RetrievalResult retrieved={0};s_online_used=0;s_online_inference_at=0;s_source_input_n=0;s_source_ledger_n=0;
   s_online_fallback=s_offline_retry;
   char search_query[513]={0};int search_action=0;
   if(!s_offline_retry&&online_should_retrieve(prompt)){
@@ -117,9 +125,9 @@ after_retrieval:;
   char question[1100],body[4096];snprintf(question,sizeof(question),"%s",prompt?prompt:"");escape_roles(question,sizeof(question));int ids[4600],n;
   snprintf(body,sizeof(body),"<|im_start|>user\n%s<|im_end|>\n<|im_start|>assistant\n",question);
   int plain_n=encode_bounded(body,ids);
-  int reference_reused=s_online_used&&s_multi_job&&s_ledger_n+plain_n+96+2<=512&&
-   reference_history_contains(retrieved.evidence,s_tokenizer.vocab,s_tokenizer.vocab_size,s_ledger,s_ledger_n);
-  if(reference_reused)dbg_log("ONLINE_REFERENCE_REUSE bytes=%u history_tokens=%d new_tokens=%d",(unsigned)strlen(retrieved.evidence),s_ledger_n,plain_n);
+  /* Always include this request's evidence in sourced inference. Canonical
+   * history may be filtered, so text in old replies is never a reuse proof. */
+  int reference_reused=0;
 
   for(;;){
    if(s_online_used&&!reference_reused)snprintf(body,sizeof(body),"<|im_start|>user\nReference material (may be incomplete or irrelevant):\n%s\n\n%s<|im_end|>\n<|im_start|>assistant\n",retrieved.evidence,question);
@@ -152,13 +160,22 @@ after_retrieval:;
   s_turn_offsets[s_turn_count++]=s_ledger_n;memcpy(s_ledger+s_ledger_n,ids,n*sizeof(int));s_ledger_n+=n;s_used_context=s_ledger_n;
   s_soft_job=s_hard_job;s_cache_us=sceKernelGetProcessTimeWide()-cache;
   snprintf(s_path_name,sizeof(s_path_name),"neural");
+  int source_input[512],*input=s_ledger,input_n=s_ledger_n;
+  if(s_online_used){
+   int assistant[16],assistant_n=encode_bounded("<|im_start|>assistant\n",assistant);
+   input_n=source_history_input(s_ledger,s_ledger_n,assistant,assistant_n,g_im_end_id,source_input,512);
+   if(input_n<1){set_error("Source history preparation failed");return;}
+   input=source_input;s_source_input_n=input_n;s_source_ledger_n=s_ledger_n;
+   dbg_log("SOURCE_HISTORY canonical_tokens=%d inference_tokens=%d prior_generated_claims_excluded=1",s_ledger_n,input_n);
+  }
+  s_used_context=input_n;
   int reuse=s_multi_job&&s_reuse_enabled;
-  if(s_reuse_enabled&&s_prefix_snapshot&&s_ledger_n>s_prefix_n&&!memcmp(s_ledger,s_prefix_ids,s_prefix_n*sizeof(int))){
-   int append=reuse&&s_session.pos>0&&s_session.pos<s_ledger_n&&!memcmp(s_session.fed,s_ledger,s_session.pos*sizeof(int));
+  if(s_reuse_enabled&&s_prefix_snapshot&&input_n>s_prefix_n&&!memcmp(input,s_prefix_ids,s_prefix_n*sizeof(int))){
+   int append=reuse&&s_session.pos>0&&s_session.pos<input_n&&!memcmp(s_session.fed,input,s_session.pos*sizeof(int));
    if(!append){uint64_t copy=sceKernelGetProcessTimeWide();TIMED(30,P_COPY,engine_prefix_restore(&s_transformer,s_prefix_n,s_prefix_snapshot,s_prefix_bytes););memcpy(s_session.fed,s_prefix_ids,s_prefix_n*sizeof(int));s_session.pos=s_prefix_n;s_prefix_used=1;s_cache_us+=sceKernelGetProcessTimeWide()-copy;reuse=1;}
   }
   if(s_online_used)s_online_inference_at=sceKernelGetProcessTimeWide();
-  int rc=session_start(&s_session,s_ledger,s_ledger_n,s_soft_job,s_hard_job,reuse);
+  int rc=session_start(&s_session,input,input_n,s_soft_job,s_hard_job,reuse);
   if(rc==-4){restore_before_reference();publish("Stopped before an answer was generated.",0);goto finish;}
   if(rc<0){set_error("Session prefill failed");return;}
  }

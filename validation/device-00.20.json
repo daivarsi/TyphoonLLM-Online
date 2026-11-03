@@ -1,0 +1,50 @@
+[
+  {
+    "label": "offline-baseline",
+    "request": "Who is cloud strife",
+    "answer": "Cloud Strife is a fictional character from the TV series \"The Strife,\" created by David B. Smith. He is a former soldier who has returned to his hometown to fight against the oppressive government.",
+    "source": "",
+    "web_context_used": false,
+    "display_matches_generated_tokens": true
+  },
+  {
+    "label": "sourced-correction",
+    "request": "Who is cloud strife",
+    "answer": "Cloud Strife is a character from Square Enix's Final Fantasy series.",
+    "source": "https://www.ssbwiki.com/Cloud",
+    "web_context_used": true,
+    "display_matches_generated_tokens": true
+  },
+  {
+    "label": "weapon-followup",
+    "request": "What weapon does he use?",
+    "answer": "Cloud uses a Buster Sword.",
+    "source": "https://www.ssbwiki.com/Cloud",
+    "web_context_used": true,
+    "display_matches_generated_tokens": true
+  },
+  {
+    "label": "unrelated-identity",
+    "request": "Who is ada lovelace.",
+    "answer": "Ada Lovelace is the first computer programmer.",
+    "source": "https://en.wikipedia.org/wiki/Lady_Ada",
+    "web_context_used": true,
+    "display_matches_generated_tokens": true
+  },
+  {
+    "label": "original-poem",
+    "request": "Write a short original poem about rain.",
+    "answer": "In de quiet morning's gentle stream,  \nA lady's laughter echoes,  \nThe rain falls softly, a soft sigh,  \nA gentle whisper, a fleeting sight.",
+    "source": "",
+    "web_context_used": false,
+    "display_matches_generated_tokens": true
+  },
+  {
+    "label": "poem-rewrite",
+    "request": "Make that poem more cheerful.",
+    "answer": "In a gentle breeze, a lady's cheer,  \nThe rain softly falls, a soft sigh,  \nA fleeting sight, a moment's grace,  \nA joyful pause, a serene end.",
+    "source": "",
+    "web_context_used": false,
+    "display_matches_generated_tokens": true
+  }
+]

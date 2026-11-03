@@ -1,0 +1,242 @@
+{
+  "total": 47,
+  "matched": 44,
+  "note": "Regression cases, not a blind benchmark. No training or model-weight changes.",
+  "cases": [
+    {
+      "request": "Compose a haiku about an empty railway station.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Make up a bedtime adventure featuring a tiny submarine.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Tell me about the poem Ozymandias.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Give me a recipe for lentil soup.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Write a sonnet using researched facts about Saturn.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Explain why Sherlock Holmes is so well known.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Which book introduced Bilbo Baggins?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Create a limerick about a sleepy astronomer.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Imagine a conversation between the wind and a mountain.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "What is the difference between a comet and an asteroid?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "How can I sew a loose button back onto a shirt?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Please make this clearer: The thing was done by us.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Hello, nice to meet you.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Invent an imaginary island and describe its strange customs.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Who wrote The Hobbit?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Find real examples of bioluminescence for my fantasy setting.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "A parcel weighs 3 kg. Each box holds 2 kg. How many boxes are needed?",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Put these events in order: checkout, choose an item, receive the parcel.",
+      "expected": false,
+      "actual": true
+    },
+    {
+      "request": "The train leaves at 16:20. Walking takes 15 minutes. When must I leave?",
+      "expected": false,
+      "actual": true
+    },
+    {
+      "request": "All red tiles are square. This tile is red. What follows?",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Rewrite this politely: send the invoice now.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Invent a name for a bakery and explain your choice.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Who invented the printing press?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Explain how solar panels generate electricity.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "What is EPUB and how does it differ from PDF?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Find the latest release notes for Firefox.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "How do I repair a slipping bicycle chain?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Research old sailing ships for my novel.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "What was her first book?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Which one is larger?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Summarize that in two bullets.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Now make the second option cheaper.",
+      "expected": false,
+      "actual": true
+    },
+    {
+      "request": "Can it handle larger files?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Thank you for the explanation.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Compare oak and pine for a bookshelf.",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "If two workers paint 8 walls in a day, what is their average per worker?",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Who is cloud strife",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Who is Cloud Strife?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "who is cloud strife",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "What weapon does he use?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Look up who cloud strife is and what weapon he uses",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Who is Samus Aran?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "who is lara croft",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "What is a capacitor?",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "request": "Write a poem about Cloud Strife.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Invent a fictional hero and their weapon.",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "request": "Translate this: who is cloud strife",
+      "expected": false,
+      "actual": false
+    }
+  ]
+}

@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 task_tmp=$(mktemp -d)
 trap 'rm -rf -- "$task_tmp"' EXIT
-for name in evidence_pack reference_history source_echo; do
+for name in evidence_pack reference_history source_echo source_history; do
   cc -std=c11 -Wall -Wextra "validation/${name}_test.c" -o "$task_tmp/$name"
   "$task_tmp/$name"
 done

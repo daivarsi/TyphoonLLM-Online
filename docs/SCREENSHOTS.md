@@ -2,6 +2,38 @@
 
 Unedited physical Vita captures, with versions identified below. Version 00.19 separates installation and model storage; it does not change generation behavior. These are examples, not a reliability guarantee.
 
+## Online 00.20: six prompts in one continuous chat
+
+No New Chat/CLEAR separated these turns. The offline baseline was deliberately incorrect; sourced generation then corrected it. [Full validation and limits](../validation/ONLINE-00.20.md).
+
+### 1. Offline baseline — incorrect identity
+
+![00.20 offline baseline, incorrect](screenshots/online-00.20-baseline.png)
+
+### 2. Identity corrected using fetched context
+
+![00.20 sourced Cloud correction](screenshots/online-00.20-correction.png)
+
+### 3. Sourced weapon follow-up
+
+![00.20 Buster Sword follow-up](screenshots/online-00.20-cloud.png)
+
+### 4. Unrelated sourced identity
+
+The answer loses the source's “often considered” qualification.
+
+![00.20 Ada Lovelace](screenshots/online-00.20-ada.png)
+
+### 5. Original rain poem, no fetch
+
+The generated poem contains the typo “In de”.
+
+![00.20 local rain poem](screenshots/online-00.20-poem.png)
+
+### 6. Cheerful rewrite, no fetch
+
+![00.20 local poem rewrite](screenshots/online-00.20-rewrite.png)
+
 ## Online 00.19: independent installation smoke test
 
 The updated app loaded its own model copy and generated the answer below. This is a plausible rim-brake description, but it gives one sentence instead of the requested two and does not explicitly explain friction. Retrieval supplied no web context. This verifies generation after installation, not full instruction-following quality.

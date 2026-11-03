@@ -1,5 +1,13 @@
 # Changes
 
+## Experimental 00.20
+
+- Require positive local-intent support using binary entailment margins; preserve original-writing, editing and social routes with general action descriptions.
+- Retain bounded document context beside the selected detail; invalidate prior retrieval cache policy.
+- Source-conditioned inference excludes earlier generated claims, while preserving user/source context and the canonical conversation. Local generation retains ordinary chat history.
+- Physical same-chat correction of a false Cloud identity and a successful sourced Buster Sword follow-up. No entity-specific logic, canned answers, model changes or chat clears.
+- Known multi-step, routing and source-fidelity limitations remain; see the 00.20 report.
+
 ## Experimental 00.19
 
 - Independent Online model/tokenizer storage and release downloads; no offline installation or data dependency.
