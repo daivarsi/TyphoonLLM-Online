@@ -36,7 +36,7 @@ void dbg_init(void)
     sceIoMkdir(app_data_dir(), 0777);
     s_log = fopen(app_log_path(), "w");
     if (s_log) {
-        fprintf(s_log, "=== TyphoonLLM Online 00.20 / VLMNET001 session log ===\n");
+        fprintf(s_log, "=== TyphoonLLM Online 01.00 / VLMNET001 session log ===\n");
         fflush(s_log);
     }
 }

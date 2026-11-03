@@ -1,8 +1,8 @@
 """Question-independent conversational document retrieval and passage ranking."""
-import dataclasses,re,time,urllib.parse,threading
+import dataclasses,re,time,urllib.parse,threading,http.client
 from service import Result,OK,NOT_FOUND,AMBIGUOUS,UNSUPPORTED
 from general_retrieval import GeneralProvider,DocumentText,complete_units,full_recipe,words,compact_query
-from web_documents import StructuredRecipe,plain
+from web_documents import StructuredRecipe,plain,normalized_url
 
 class SemanticProvider(GeneralProvider):
     def __init__(self,ranker,backend=None,intent=None):
@@ -44,6 +44,7 @@ class SemanticProvider(GeneralProvider):
     def web_candidates(self,row):
         url=row.get('url','');url='https://'+url[7:] if url.startswith('http://') else url
         if not url.startswith('https://'):return []
+        url=normalized_url(url)
         parsed=urllib.parse.urlsplit(url)
         if parsed.hostname=='en.wikipedia.org' and parsed.path.startswith('/wiki/'):
             title=urllib.parse.unquote(parsed.path[6:]).replace('_',' ')
@@ -79,7 +80,7 @@ class SemanticProvider(GeneralProvider):
                 self.document_local.epoch=epoch
                 value=self.collect(message,suggestion,topic)
                 result.append(value if epoch==self.document_epoch else Result(NOT_FOUND,error='Conversation changed'))
-            except (OSError,ValueError,KeyError,TypeError) as e:
+            except (OSError,ValueError,KeyError,TypeError,http.client.HTTPException) as e:
                 result.append(Result(NOT_FOUND,error=type(e).__name__))
             finally:self.flight.release();done.set()
         threading.Thread(target=run,daemon=True).start()
@@ -135,7 +136,7 @@ class SemanticProvider(GeneralProvider):
             try:
                 add([r for p in self.wiki_pages(topic,full=True) for r in self.wiki_candidates(p)])
                 expanded.add(topic)
-            except (OSError,ValueError,KeyError,TypeError) as e:errors.append(type(e).__name__)
+            except (OSError,ValueError,KeyError,TypeError,http.client.HTTPException) as e:errors.append(type(e).__name__)
         # Original request has priority over a potentially stale model rewrite.
         tasks=list(dict.fromkeys([(compact_query(message),True),(compact_query(suggestion),True)]))
         for query,search in tasks:
@@ -147,7 +148,7 @@ class SemanticProvider(GeneralProvider):
                 if first and first['title'] not in expanded and time.monotonic()<deadline:
                     expanded.add(first['title'])
                     add([r for p in self.wiki_pages(first['title'],full=True) for r in self.wiki_candidates(p)])
-            except (OSError,ValueError,KeyError,TypeError) as e:errors.append(type(e).__name__)
+            except (OSError,ValueError,KeyError,TypeError,http.client.HTTPException) as e:errors.append(type(e).__name__)
         if time.monotonic()<deadline:
             try:
                 rows=self.search.search(compact_query(message))
@@ -157,7 +158,7 @@ class SemanticProvider(GeneralProvider):
                 for row in rows[:3]:
                     if time.monotonic()>=deadline or getattr(self.document_local,'epoch',self.document_epoch)!=self.document_epoch:break
                     try:add(self.web_candidates(row))
-                    except (OSError,ValueError,KeyError,TypeError) as e:errors.append(type(e).__name__)
-            except (OSError,ValueError,KeyError,TypeError) as e:errors.append(type(e).__name__)
+                    except (OSError,ValueError,KeyError,TypeError,http.client.HTTPException) as e:errors.append(type(e).__name__)
+            except (OSError,ValueError,KeyError,TypeError,http.client.HTTPException) as e:errors.append(type(e).__name__)
         selected=self.select(message,topic,candidates)
         return selected or Result(NOT_FOUND,error='No relevant document; source errors='+repr(errors)[:120])

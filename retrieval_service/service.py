@@ -10,7 +10,7 @@ from pathlib import Path
 
 VERSION=2
 
-CACHE_POLICY=13
+CACHE_POLICY=14
 
 REQUEST=struct.Struct('!4sHH')
 

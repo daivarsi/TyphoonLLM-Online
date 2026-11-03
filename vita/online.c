@@ -15,7 +15,7 @@ static volatile int state,connection_checked,network_initializing;
 static int health_thread_id=-1;
 static int network_init(void);
 static int online_rpc(const char*,const char*,RetrievalResult*,volatile int*,int);
-static const char *states[]={"","Searching web...","Reading context...","Generating...","Web context used","PC companion unavailable","No useful web context","Source busy","Lookup unavailable","Answer incomplete","Using conversation","Answering without web context","Preparing lookup..."};
+static const char *states[]={"","Searching web...","Reading context...","Generating...","Web context used","PC companion unavailable","No useful web context","Source busy","Lookup unavailable","Answer incomplete","Using conversation","No usable web context; answering locally","Preparing lookup..."};
 int online_mode(void){return mode;}
 const char*online_mode_name(void){return mode?"ONLINE":"OFFLINE";}
 const char*online_status(void){return states[state>=0&&state<13?state:0];}

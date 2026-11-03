@@ -1,6 +1,6 @@
 # Current validation status
 
-**Experimental. Version 00.20 fixes the demonstrated weak-intent routing and prior-generated-answer feedback in the tested Cloud cases. General answer quality remains limited.**
+**Experimental. Version 01.00 fixes malformed-source URL handling and restores the original header. The inherited 00.20 changes fix the demonstrated weak-intent routing and prior-generated-answer feedback in the tested Cloud cases. General answer quality remains limited.**
 
 ## Source implementation
 
@@ -8,7 +8,7 @@ The companion supplies retrieved source text; the Vita generates every answer. L
 
 ## Local automated checks
 
-- 68 host tests passed, covering protocol bounds, fragmentation, truncation, peer access, cache behavior, routing and evidence packing.
+- 77 host tests passed, covering protocol bounds, fragmentation, truncation, peer access, cache behavior, routing and evidence packing.
 - 45 existing native controls plus the new source-history filtering/commit/continuation/bounds suite passed. VitaSDK build completed with warnings.
 - 44/47 routing regression cases matched expectations; three ambiguous reasoning/revision cases still search unnecessarily. Three additional controls routed as expected. This is not a blind benchmark.
 
@@ -18,13 +18,14 @@ These checks do not establish answer accuracy. [Full 00.20 report](validation/ON
 
 | Evaluation | Result |
 | --- | --- |
+| [01.00 URL correction](validation/ONLINE-01.00.md) | Live retest of the formerly crashing request used fetched text; the selected first-name match remained ambiguous and the answer added an unsupported claim. Original header restored and package verified. Five further continuous-chat captures verified sourced identity/follow-up and local writing/rewrite; all outputs matched emitted tokens. |
 | [00.20 continuous chat](validation/ONLINE-00.20.md) | False offline Cloud identity corrected using fetched context; Buster Sword follow-up succeeded. Unrelated Ada identity used relevant evidence but lost a qualifier. Original poem and cheerful rewrite stayed local. All six outputs matched emitted tokens. |
 | [00.19 separation](validation/SEPARATION-00.19.md) | Independent model path and installation verified. Generation completed but missed a two-sentence instruction. |
 | [00.18 source/conversation tests](validation/ONLINE-00.18.md) | Mixed successes and failures, including contradiction of supplied sources. |
 | [00.18 six multi-step tasks](validation/MULTISTEP-00.18.md) | 0/6 complete passes. Wrong arithmetic, priorities, missing steps and unsupported explanations. |
 | [Earlier companion follow-up](validation/COMPANION-FOLLOWUP.md) | Budget routing became local but the answer remained wrong. |
 
-The installed 00.20 metadata and executable match its VPK byte-for-byte: [verification](validation/installed-00.20.json). No New Chat/CLEAR separated the six 00.20 prompts. Private logs are not published; sanitized results and screenshots are included.
+The installed 01.00 metadata and executable match its VPK byte-for-byte: [verification](validation/installed-01.00.json). No New Chat/CLEAR separated the six 00.20 prompts. Private logs are not published; sanitized results and screenshots are included.
 
 ## Remaining limits
 

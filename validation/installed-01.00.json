@@ -1,0 +1,8 @@
+{
+  "title_id": "VLMNET001",
+  "version": "01.00",
+  "title": "TyphoonLLM Online",
+  "metadata_matches_package": true,
+  "eboot_sha256": "fe98fd62c4b12ee6386dd85d89f4a6d3d5bdfb5d5bc73ac0f76a10998a208909",
+  "vpk_sha256": "94ada443064dbf9957fb1d04e209bd19ccb24be0a3ee82263a545deead78fc89"
+}

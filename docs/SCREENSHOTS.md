@@ -2,6 +2,36 @@
 
 Unedited physical Vita captures, with versions identified below. Version 00.19 separates installation and model storage; it does not change generation behavior. These are examples, not a reliability guarantee.
 
+## Current 01.00: original header restored
+
+Five consecutive physical Vita captures, with no New Chat/CLEAR between prompts. The original header font, size and wording are restored. [Validation and limits](../validation/ONLINE-01.00.md).
+
+### Cloud identity — fetched context
+
+![01.00 sourced Cloud identity](screenshots/online-01.00-identity.png)
+
+### Weapon follow-up — fetched context
+
+![01.00 sourced Buster Sword follow-up](screenshots/online-01.00-cloud.png)
+
+### Ada Lovelace — fetched context
+
+The answer omits the source's “often considered” qualifier.
+
+![01.00 Ada Lovelace](screenshots/online-01.00-ada.png)
+
+### Rain poem — local generation
+
+The output contains the typo “In de”.
+
+![01.00 local rain poem](screenshots/online-01.00-poem.png)
+
+### Cheerful rewrite — local generation
+
+![01.00 local poem rewrite](screenshots/online-01.00-rewrite.png)
+
+The following older captures are unmodified historical records. The changed header visible in 00.19/00.20 was reverted in 01.00.
+
 ## Online 00.20: six prompts in one continuous chat
 
 No New Chat/CLEAR separated these turns. The offline baseline was deliberately incorrect; sourced generation then corrected it. [Full validation and limits](../validation/ONLINE-00.20.md).

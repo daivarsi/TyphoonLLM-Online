@@ -4,13 +4,25 @@ from html.parser import HTMLParser
 from service import clean
 class SafeRedirect(urllib.request.HTTPRedirectHandler):
  def redirect_request(self,req,fp,code,msg,headers,newurl):
-  public_url(newurl)
+  newurl=public_url(newurl)
   return super().redirect_request(req,fp,code,msg,headers,newurl)
 
-def public_url(url):
+def normalized_url(url):
+ # Search providers and redirects may return IRIs or unescaped spaces. Encode
+ # URL components without decoding existing escapes or changing delimiters.
+ if not isinstance(url,str) or len(url)>2048 or any(ord(c)<32 or ord(c)==127 for c in url):raise ValueError('invalid source URL')
  p=urllib.parse.urlsplit(url)
  if p.scheme!='https' or not p.hostname or p.username or p.password or p.port not in (None,443):raise ValueError('HTTPS public source required')
- if len(url)>2048:raise ValueError('source URL too long')
+ if any(c.isspace() for c in p.netloc):raise ValueError('invalid source host')
+ host=p.hostname.encode('idna').decode('ascii')
+ authority=('['+host+']' if ':' in host else host)+(':443' if p.port==443 else '')
+ safe="/%:@!$&'()*+,;=-._~"
+ result=urllib.parse.urlunsplit(('https',authority,urllib.parse.quote(p.path,safe=safe),urllib.parse.quote(p.query,safe=safe+'?'),urllib.parse.quote(p.fragment,safe=safe+'?')))
+ if len(result)>2048:raise ValueError('source URL too long')
+ return result
+
+def public_url(url):
+ url=normalized_url(url);p=urllib.parse.urlsplit(url)
  addresses=socket.getaddrinfo(p.hostname,443,type=socket.SOCK_STREAM)
  if not addresses or any(not ipaddress.ip_address(row[4][0]).is_global for row in addresses):raise ValueError('private source blocked')
  return url
@@ -49,7 +61,7 @@ class WebSearch(object):
   self.opener=urllib.request.build_opener(urllib.request.HTTPSHandler(context=tls),SafeRedirect());self.local=threading.local();self.lock=threading.Lock();self.last=0;self.cache={}
 
  def request(self,url,limit):
-  public_url(url)
+  url=public_url(url)
   req=urllib.request.Request(url,headers={'User-Agent':'TyphoonOnline/0.2 (personal PS Vita retrieval client)','Accept':'application/json,text/html'})
   remaining=getattr(self.local,'deadline',time.monotonic()+5)-time.monotonic()
   if remaining<=0:raise TimeoutError('retrieval deadline')

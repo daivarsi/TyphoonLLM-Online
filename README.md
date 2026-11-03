@@ -2,13 +2,15 @@
 
 **Experimental technology demo. Known answer-quality failures remain.** Six earlier 00.18 multi-step device tests produced **0/6 complete passes**. Answers can contain wrong arithmetic, omit instructions, or contradict supplied sources. The earlier companion routing fix did not correct the budget answer or demonstrate a faster full response. See [current status](STATUS.md), [the six-task report](validation/MULTISTEP-00.18.md), and [the follow-up](validation/COMPANION-FOLLOWUP.md).
 
-[Download experimental 00.20](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.20). **A separate Vita app with its own model/data folder and downloads.** No offline TyphoonLLM installation is required. [See real Vita prompt/output screenshots](docs/SCREENSHOTS.md).
+[Download experimental 01.00](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v01.00). **A separate Vita app with its own model/data folder and downloads.** No offline TyphoonLLM installation is required. [See real Vita prompt/output screenshots](docs/SCREENSHOTS.md).
 
 The Vita generates every answer locally. The trusted-LAN PC companion classifies requests, retrieves documents, and supplies optional source text. It never generates chatbot answers. This is useful for experimenting with the pipeline; it is not a dependable factual or reasoning assistant.
 
-![Real Vita capture of Online 00.20 using fetched sources](docs/screenshots/online-00.20-cloud.png)
+![Real Vita capture of 01.00 with the original header](docs/screenshots/online-01.00-cloud.png)
 
-*Actual 00.20 Vita output: a sourced identity answer followed by a sourced Buster Sword answer in the same chat. See [validation](validation/ONLINE-00.20.md) and the [screenshot gallery](docs/SCREENSHOTS.md), including older failures.*
+*Actual 01.00 capture with the original header restored. See [01.00 validation](validation/ONLINE-01.00.md) and the [screenshot gallery](docs/SCREENSHOTS.md), including older failures.*
+
+01.00 encodes spaces and Unicode in fetched URLs and redirects, and isolates HTTP failures so one bad result cannot discard valid evidence. It restores the original in-app header. Update both the app and companion.
 
 ## One answer pipeline
 
@@ -25,7 +27,7 @@ The 512-token context reserves space for a complete concise response and evicts 
 
 ## Install or update
 
-Follow [INSTALL.md](INSTALL.md) for exact Windows setup commands, pinned asset downloads, hash checks, connection setup and update instructions. Start from the source archive in the **same 00.20 release**.
+Follow [INSTALL.md](INSTALL.md) for exact Windows setup commands, pinned asset downloads, hash checks, connection setup and update instructions. Start from the source archive in the **same 01.00 release**.
 
 Online has its own bubble, title **VLMNET001**, and all data under `ux0:data/TyphoonOnline/`. Offline **VLMCHAT01** retains its own files. Version 00.19 removed shared model paths. Version 00.20 updates routing, evidence context and sourced inference; model contents and clock settings are unchanged. Triangle toggles web access; connectivity indicators do not certify answer quality.
 
