@@ -1,6 +1,6 @@
 # Current validation status
 
-**Experimental. Answer quality remains unresolved.** Bundle 00.18.1 updates the companion and documentation; the installed Vita app remains 00.18.
+**Experimental. Answer quality remains unresolved.** Version 00.19 separates model storage and distribution from offline TyphoonLLM and labels the app explicitly. Generation and companion behavior remain unchanged.
 
 ## Source implementation
 
@@ -9,7 +9,7 @@ The PC companion classifies the action, optionally retrieves documents, and supp
 ## Local automated checks
 
 - 62 host checks pass, covering protocol bounds, fragmentation, truncated requests, IP allowlist rejection, cache isolation, no-fetch routing, weak deduction confidence and repeated ranking.
-- Native 00.18 checks passed: 24 evidence-boundary, 10 reference-history, 6 echo and 5 actual-session completion controls. The native code has not changed since those checks and the successful VitaSDK build.
+- Native controls were rerun successfully for 00.19: 24 evidence-boundary, 10 reference-history, 6 echo and 5 actual-session completion controls. The 00.19 native changes are model paths, visible title and package metadata; see [separation validation](validation/SEPARATION-00.19.md).
 - The prior 16 intent regressions pass. The expanded classifier evaluation matches 33/36 expectations; event ordering, a timed-departure question and a social acknowledgment still route unnecessarily to research. [All cases](validation/companion-routing-evaluation.json).
 
 These checks do not establish answer quality or physical performance. The wire protocol has no cryptographic authentication. Build warnings and source-provenance limitations remain documented.
@@ -18,13 +18,14 @@ These checks do not establish answer quality or physical performance. The wire p
 
 | Evaluation | Result |
 | --- | --- |
+| [00.19 separate installation](validation/SEPARATION-00.19.md) | Own model path and installed package verified on Vita; one generation completed with matching token/display text, but missed the requested two-sentence format. |
 | [Original continuous-chat run](validation/ONLINE-00.18.md) | Original writing, identity and weapon cases succeeded; storage, washing, recipe, hypotheses and source interpretation had failures. |
 | [Six new multi-step tasks](validation/MULTISTEP-00.18.md) | 0/6 complete passes. Wrong calculations, incorrect priorities, missing steps and unsupported explanations. |
 | [Companion follow-up](validation/COMPANION-FOLLOWUP.md) | Budget routing became local with no fetched text, but its answer remained wrong. A new capacitor answer was correct locally after retrieval failed. |
 
 The budget routing stage changed from a 35-second failed lookup to a 1.843-second local decision. **That is not full response time.** The retest took 68.538 seconds overall, versus about 58 seconds in the earlier conversation state. Different prefill/history work prevents claiming an end-to-end speedup.
 
-No New Chat/CLEAR separated test questions. Displayed answers were checked against emitted token IDs; private conversation traces are not published. Full VitaShell installation was verified as VLMNET001 version 00.18, with executable and metadata matching the released VPK byte-for-byte. [Installation hashes](validation/installed-00.18.json).
+No New Chat/CLEAR separated test questions. Displayed answers were checked against emitted token IDs; private conversation traces are not published. The earlier full VitaShell installation was verified as VLMNET001 version 00.18, with executable and metadata matching the released VPK byte-for-byte. [Installation hashes](validation/installed-00.18.json).
 
 ## Release scope
 

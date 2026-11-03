@@ -1,5 +1,12 @@
 # Changes
 
+## Experimental 00.19
+
+- Independent Online model/tokenizer storage and release downloads; no offline installation or data dependency.
+- Explicit Online header and package filename; same separate VLMNET001 title.
+- Real Vita screenshots include a useful answer and a documented arithmetic failure.
+- Model contents, generation and companion behavior unchanged.
+
 ## Experimental bundle 00.18.1
 
 - Companion follow-up: confidence-gated deduction routing, one final ranking of prior/current documents, cache policy 12.

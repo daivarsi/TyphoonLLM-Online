@@ -5,8 +5,8 @@
 #ifndef WOOZYLLM_LLAMA_WORKER_H
 #define WOOZYLLM_LLAMA_WORKER_H
 
-#define LLAMA_MODEL_PATH "ux0:data/VitaLMChat/model.vlp"
-#define LLAMA_TOKENIZER_PATH "ux0:data/VitaLMChat/tokenizer.bin"
+#define LLAMA_MODEL_PATH "ux0:data/TyphoonOnline/model.vlp"
+#define LLAMA_TOKENIZER_PATH "ux0:data/TyphoonOnline/tokenizer.bin"
 #define LLAMA_RESPONSE_MAX 8192
 
 enum llama_worker_state {

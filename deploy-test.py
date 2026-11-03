@@ -12,7 +12,7 @@ def title_id(sfo):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--host',required=True);parser.add_argument('--cli',required=True);args=parser.parse_args()
     if not ipaddress.ip_address(args.host).is_private:raise SystemExit('Trusted LAN only')
-    vpk=root/'build-vita/VitaLMChat.vpk'
+    vpk=root/'build-vita/TyphoonLLM-Online.vpk'
     with zipfile.ZipFile(vpk) as package:
         if title_id(package.read('sce_sys/param.sfo'))!='VLMNET001':raise SystemExit('Refusing production or unrelated title')
         eboot=package.read('eboot.bin')

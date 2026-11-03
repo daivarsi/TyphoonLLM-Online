@@ -2,9 +2,13 @@
 
 **Experimental technology demo. Known answer-quality failures remain.** Six new multi-step device tests produced **0/6 complete passes**. Answers can contain wrong arithmetic, omit instructions, or contradict supplied sources. The later companion routing fix did not correct the budget answer or demonstrate a faster full response. See [current status](STATUS.md), [the six-task report](validation/MULTISTEP-00.18.md), and [the follow-up](validation/COMPANION-FOLLOWUP.md).
 
-[Download experimental bundle 00.18.1](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.18.1). **The Vita app remains 00.18.** Bundle 00.18.1 contains the updated PC companion and documentation plus the byte-identical verified 00.18 VPK. Existing 00.18 users only need to update the companion. The original 00.18 release remains available as a historical snapshot.
+[Download experimental 00.19](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.19). **A separate Vita app with its own model/data folder and downloads.** No offline TyphoonLLM installation is required. [See real Vita prompt/output screenshots](docs/SCREENSHOTS.md).
 
 The Vita generates every answer locally. The trusted-LAN PC companion classifies requests, retrieves documents, and supplies optional source text. It never generates chatbot answers. This is useful for experimenting with the pipeline; it is not a dependable factual or reasoning assistant.
+
+![Real Vita capture of Online 00.19](docs/screenshots/online-00.19-brake.png)
+
+*Actual device output: the answer misses the requested two-sentence format. More samples, including an arithmetic failure, are in the [screenshot gallery](docs/SCREENSHOTS.md).*
 
 ## One answer pipeline
 
@@ -21,16 +25,16 @@ The 512-token context reserves space for a complete concise response and evicts 
 
 ## Install or update
 
-Follow [INSTALL.md](INSTALL.md) for exact Windows setup commands, pinned asset downloads, hash checks, connection setup and update instructions. Start from the source archive in the **same 00.18.1 bundle**, rather than the older 00.18 source archive.
+Follow [INSTALL.md](INSTALL.md) for exact Windows setup commands, pinned asset downloads, hash checks, connection setup and update instructions. Start from the source archive in the **same 00.19 release**.
 
-The online app uses **VLMNET001** and existing model data under `ux0:data/VitaLMChat`. It is separate from offline **VLMCHAT01**. This update leaves the Vita executable, weights, tokenizer and clock settings unchanged. Triangle toggles web access; connectivity indicators do not certify answer quality.
+Online has its own bubble, title **VLMNET001**, and all data under `ux0:data/TyphoonOnline/`. Offline **VLMCHAT01** retains its own files. Version 00.19 removes shared model paths; model contents, generation and clock settings are unchanged. Triangle toggles web access; connectivity indicators do not certify answer quality.
 
 The protocol uses a peer IP allowlist, not cryptographic authentication or encryption. Use a trusted LAN and do not forward TCP 28500. Research queries are sent to public source providers. Local-intent requests are classified on the PC without fetching web content.
 
 ## Build and validate
 
-Set `VITASDK` and run `bash build-vita.sh`. Output: `build-vita/VitaLMChat.vpk`. Inspect its title ID because the historical filename is shared with offline builds.
+Set `VITASDK` and run `bash build-vita.sh`. Output: `build-vita/TyphoonLLM-Online.vpk`, title **VLMNET001**.
 
 Run `python -m unittest discover -s retrieval_service -p 'test_*.py'` for transport, bounds, fragmentation, peer access, source parsing, intent gating, cache isolation and fallback checks. Run `bash validation/run-native-tests.sh` with a host C compiler for reference retention, source echo and actual-session completion controls. These are not answer-quality tests.
 
-Preserve all [file-specific licenses and provenance](THIRD_PARTY_NOTICES.md). No project-wide license is invented. PC models and runtime dependencies are downloaded separately; user conversations, credentials, caches and model weights are not included in source or release packages.
+Preserve all [file-specific licenses and provenance](THIRD_PARTY_NOTICES.md). No project-wide license is invented. PC models and runtime dependencies are downloaded separately; user conversations, credentials, caches and model weights are not included in source archives or the VPK. Verified Vita model files and their exact license are separate release downloads.

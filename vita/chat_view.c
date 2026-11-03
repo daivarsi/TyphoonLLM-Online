@@ -42,8 +42,8 @@ int chat_message(const char*text,int user,int y,int draw){
 void chat_view(uint32_t*p,char users[][1025],char answers[][CHAT_ANSWER],int turns,const char*draft,const char*status,int busy,int options,int phase,ChatScroll*scroll,const char*debug,int dark){
  bg=dark?RGB(11,19,29):RGB(246,244,238);ink=dark?RGB(237,240,235):RGB(31,42,45);muted=dark?RGB(161,178,184):RGB(87,105,108);green=dark?RGB(131,197,202):RGB(35,101,110);line=dark?RGB(46,60,69):RGB(206,211,204);user_bg=dark?RGB(29,48,61):RGB(224,232,226);surface=dark?RGB(22,34,46):RGB(234,236,229);composer=dark?RGB(22,35,47):RGB(235,237,230);action=dark?RGB(221,180,115):RGB(112,77,27);
  canvas_begin(p);storm_background(p,dark);
- storm_mark(28,14,35);canvas_text(75,14,"Typhoon LLM",32,ink);
- int title_dot=75+canvas_width("Typhoon LLM",32)+14,badge=online_badge_state();if(badge==ONLINE_BADGE_ONLINE)canvas_round(title_dot,27,7,7,3,RGB(68,200,110));canvas_text(title_dot+16,22,online_badge_label(badge),12,muted);
+ storm_mark(28,14,35);canvas_text(75,14,"TyphoonLLM Online",28,ink);
+ int title_dot=75+canvas_width("TyphoonLLM Online",28)+14,badge=online_badge_state();if(badge==ONLINE_BADGE_ONLINE)canvas_round(title_dot,27,7,7,3,RGB(68,200,110));canvas_text(title_dot+16,22,online_badge_label(badge),12,muted);
  canvas_round(710,12,162,42,21,surface);canvas_text(735,23,"+ New chat",16,ink);
  canvas_round(886,12,48,42,21,surface);for(int x=899;x<=919;x+=10)canvas_round(x,31,3,3,1,ink);
  canvas_rect(32,65,896,1,line);

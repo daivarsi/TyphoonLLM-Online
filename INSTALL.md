@@ -1,32 +1,28 @@
-# Install experimental bundle 00.18.1
+# Install TyphoonLLM Online 00.19
 
-Bundle **00.18.1** updates the PC companion and documentation. The VPK remains the same verified **00.18 / VLMNET001** executable. Existing 00.18 users can update only the companion. Read [STATUS.md](STATUS.md) before evaluating answer quality.
+Online is a separate app and repository. Offline TyphoonLLM is not required. Answer quality remains experimental; read [STATUS.md](STATUS.md).
 
 ## Download and verify
 
-Get the VPK, `TyphoonLLM-Online-00.18.1-source.zip` and `SHA256SUMS.txt` from [this release](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.18.1). Extract the source archive and open PowerShell in its root, containing `run-service.py`. The older 00.18 source archive does not include the companion follow-up.
+Get `TyphoonLLM-Online-00.19.vpk`, `TyphoonLLM-Online-00.19-source.zip`, `model.vlp`, `tokenizer.bin`, `MODEL_LICENSE.txt` and `SHA256SUMS.txt` from [the Online release](https://github.com/daivarsi/TyphoonLLM-Online/releases/tag/v00.19). All downloads are hosted in this repository's release.
 
-Run `Get-FileHash -Algorithm SHA256 <downloaded-file>` and compare with the checksum file. The unchanged VPK hash is:
-
-```text
-5f6b8f8efb527905b5bb3d8bb56ea75edfe3ec0cfc3bb5bf34aad8ac380e2b53
-```
+Run `Get-FileHash -Algorithm SHA256 <downloaded-file>` and compare with `SHA256SUMS.txt`. Model provenance and expected hashes are in [MODEL_AND_PROVENANCE.md](MODEL_AND_PROVENANCE.md). Preserve the model license.
 
 ## Vita files
 
-This assumes a Vita already able to install homebrew using VitaShell. No firmware, boot configuration or taiHEN changes are part of this installation.
+This assumes a Vita already able to install homebrew using VitaShell. No firmware, boot configuration or taiHEN changes are part of installation.
 
-1. Stage `TyphoonLLM-Online-00.18.vpk` under `ux0:data/TyphoonOnline/` and install using VitaShell. Verify title **VLMNET001**, version **00.18**.
-2. Keep existing model files unchanged. If absent, download [model.vlp](https://github.com/daivarsi/TyphoonLLM/releases/download/v03.05/model.vlp), [tokenizer.bin](https://github.com/daivarsi/TyphoonLLM/releases/download/v03.05/tokenizer.bin), and [MODEL_LICENSE.txt](https://github.com/daivarsi/TyphoonLLM/releases/download/v03.05/MODEL_LICENSE.txt). Copy them into `ux0:data/VitaLMChat/`. Installing the offline VPK is not required.
-3. Verify model/tokenizer hashes against [MODEL_AND_PROVENANCE.md](MODEL_AND_PROVENANCE.md). They are not bundled in the online VPK.
+1. Create `ux0:data/TyphoonOnline/`. Copy `model.vlp`, `tokenizer.bin` and `MODEL_LICENSE.txt` there (about 245 MB total). They are separate downloads, not embedded in the VPK.
+2. Stage `TyphoonLLM-Online-00.19.vpk` in that directory and install using VitaShell. Verify title **VLMNET001**, version **00.19**, name **TyphoonLLM Online**.
+3. Open its own **TyphoonLLM Online** bubble. Configure the PC companion below for web retrieval.
 
-Online **VLMNET001** is separate from offline **VLMCHAT01**. Save any conversation you want to retain before closing or reinstalling the app; persistence across restart is not promised.
+Online stores models, settings and logs only in `ux0:data/TyphoonOnline/`. Offline **VLMCHAT01** and its data are independent. Neither app is required to install the other.
 
 ## Windows companion
 
 The documented environment is 64-bit Python 3.12 on Windows. Use an AVX2-capable x86-64 PC for the pinned relevance artifact. Internet access is needed for dependencies, model downloads and public document retrieval.
 
-From the extracted source root:
+Extract `TyphoonLLM-Online-00.19-source.zip`, then open PowerShell in its root (the directory containing `run-service.py`):
 
 ```powershell
 py -3.12 -m venv .venv
@@ -61,14 +57,13 @@ The 62 host checks cover implementation behavior. The last command checks 16 cla
 
 Optional `--audit` and `--cache` files can contain queries and fetched text. They are not required for normal operation; review them before sharing.
 
-## Update an existing 00.18 setup
+## Update an existing Online installation
 
-1. Stop the old companion with Ctrl+C.
-2. Extract the 00.18.1 source into a separate directory. Create its virtual environment and install its requirements.
-3. Run both model setup scripts, or reuse verified model directories with `--intent-model <path>` and `--ranker-model <path>`.
-4. Start the new companion with the same PC/Vita addresses. If an optional cache is reused, the new policy excludes previous-version entries.
+1. Copy the verified `model.vlp`, `tokenizer.bin` and `MODEL_LICENSE.txt` to `ux0:data/TyphoonOnline/`. You may copy your existing matching files; leave offline originals intact.
+2. Save any conversation you need, close Online and install the 00.19 VPK. This updates only **VLMNET001**. Existing Online settings remain in its data directory; chat persistence is not promised.
+3. Use the companion from this release. Existing 00.18.1 companion users need no dependency/model changes. Other users should follow the setup above.
 
-No Vita reinstall is needed for existing 00.18 users, and its current chat can remain open during this companion-only update. Older app versions must first update to the matching 00.18 VPK.
+The app does not fall back to the offline data directory. Missing Vita model files must be placed in Online's own folder.
 
 ## Troubleshooting
 
