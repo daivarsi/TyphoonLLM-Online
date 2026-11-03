@@ -64,12 +64,12 @@ Private screenshots and token logs were inspected but are not published because 
 
 **Generated answer:**
 
-> **Strengths of epub vs. pdf:**  
-> - **epub**: Faster loading times, better for quick access to large files, and easier to share with others.  
-> - **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.  
-> 
-> **Choice for a novel:** **epub** (faster, easier sharing, and better for quick access).  
-> 
+> **Strengths of epub vs. pdf:**
+> - **epub**: Faster loading times, better for quick access to large files, and easier to share with others.
+> - **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.
+>
+> **Choice for a novel:** **epub** (faster, easier sharing, and better for quick access).
+>
 > **Choice for a page layout:** **pdf** (compact, efficient for detailed content).
 
 **Assessment:** Chose EPUB for the novel and PDF for exact layout, but used unsupported speed, sharing and file-size claims rather than reflow and layout preservation.
@@ -82,12 +82,12 @@ Private screenshots and token logs were inspected but are not published because 
 
 **Generated answer:**
 
-> **Strengths of epub vs. pdf:**  
-> - **epub**: Faster loading times, better for quick access to large files, and easier to share with others.  
-> - **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.  
-> 
-> **Tradeoff for exact layout document:** **pdf** (compact, efficient for detailed content).  
-> 
+> **Strengths of epub vs. pdf:**
+> - **epub**: Faster loading times, better for quick access to large files, and easier to share with others.
+> - **pdf**: More compact and efficient for smaller files, ideal for detailed documents or print-ready content.
+>
+> **Tradeoff for exact layout document:** **pdf** (compact, efficient for detailed content).
+>
 > This recommendation prioritizes speed and ease of sharing, while the exact layout ensures precision and reduced file size, making it better suited for detailed or print-ready materials.
 
 **Assessment:** Retained the document-format subject but repeated the previous rationale and ignored the large-text/no-sideways-scroll constraint.
