@@ -27,12 +27,18 @@ static uint64_t request_started,stress_wait_until;
 static UiGesture gesture;static int keyboard_pending,input_block;
 static FILE*stress_file;static int test_cancel_ms;static uint64_t test_at;static int test_multi,test_policy,test_hard=160,test_soft=120;static int stress_index,stress_pending,ime_age,stress_cancel;
 static char stress_prompt[1025];static uint64_t stress_started,stress_token_start;
+static int test_pause_requested(void){
+ static uint64_t next_check;static int paused;uint64_t now=sceKernelGetProcessTimeWide();
+ if(now>=next_check){char path[180];snprintf(path,sizeof(path),"%s/test.pause",app_data_dir());FILE*f=fopen(path,"r");paused=f!=0;if(f)fclose(f);next_check=now+250000;}
+ return paused;
+}
+
 static void render(int busy){
  char detail[1000],label[96];llama_worker_statistics(detail,sizeof(detail));
  size_t details_used=strlen(detail);snprintf(detail+details_used,sizeof(detail)-details_used,"\nOnline: %s / Triangle changes mode",online_mode_name());
  snprintf(label,sizeof(label),"%s",status);
  if(busy)snprintf(label,sizeof(label),"%s / %llu s",turns&&answers[turns-1][0]?"Generating":"Thinking",(unsigned long long)((sceKernelGetProcessTimeWide()-request_started)/1000000));
- if(*online_status())snprintf(label,sizeof(label),"%s / %s",online_mode_name(),online_status());
+ if(*online_status())snprintf(label,sizeof(label),"%s / %s%s%s",online_mode_name(),online_status(),busy?"":" / ",busy?"":status);
  else if(!busy)snprintf(label,sizeof(label),"%s / %s",online_mode_name(),status);
  if(stopped&&busy)snprintf(label,sizeof(label),"Stopping...");
  if(reset_pending)snprintf(label,sizeof(label),"Stopping to start a new chat...");
@@ -76,7 +82,7 @@ int main(void){
  dbg_log("INPUT panel_rc=%x min=%d,%d max=%d,%d",panel_rc,panel.minDispX,panel.minDispY,panel.maxDispX,panel.maxDispY);
  unsigned prev=0;int frame=0,last_badge=-1;uint64_t last_poll=0;int gap_logs=0,previous_contacts=0;
  if(app_test_path())stress_file=fopen(app_test_path(),"r");if(stress_file){stress_started=sceKernelGetProcessTimeWide();dbg_log("STRESS start heap=%u",(unsigned)mallinfo().uordblks);}
- dbg_log("PHASE4_UI_READY version=00.14 model=Q8 native_ime=1 default_multi=%d",multi);
+ dbg_log("PHASE4_UI_READY version=00.17 model=Q8 native_ime=1 default_multi=%d",multi);
  while(1){
  int state=llama_worker_get_state(),busy=state==LLAMA_WORKER_RUNNING;
  if(turns&&(busy||response_pending)){
@@ -89,7 +95,7 @@ int main(void){
  if(app_test_path())dbg_log("INPUT ime_return sampling_rc=%x prior_state=%d restart_rc=%x",sr,sampling,rr);
  dirty=1;if(stress_pending){snprintf(draft,sizeof(draft),"%s",stress_prompt);stress_pending=0;stress_index++;submit(test_hard);test_at=sceKernelGetProcessTimeWide();stress_token_start=sceKernelGetProcessTimeWide();stress_cancel=test_cancel_ms>0;}else if(done==1)submit(160);}
  busy=llama_worker_get_state()==LLAMA_WORKER_RUNNING;
- if(stress_file&&!busy&&!ui_ime_active()&&!stress_pending&&!was_busy&&sceKernelGetProcessTimeWide()>=stress_wait_until){if(fgets(stress_prompt,sizeof(stress_prompt),stress_file)){stress_prompt[strcspn(stress_prompt,"\r\n")]=0;
+ if(stress_file&&!test_pause_requested()&&!busy&&!ui_ime_active()&&!stress_pending&&!was_busy&&sceKernelGetProcessTimeWide()>=stress_wait_until){if(fgets(stress_prompt,sizeof(stress_prompt),stress_file)){stress_prompt[strcspn(stress_prompt,"\r\n")]=0;
  if(!strncmp(stress_prompt,"ONLINE_MODE ",12)){online_set_mode(atoi(stress_prompt+12));dbg_log("ONLINE_TEST mode=%s",online_mode_name());}
  else if(!strncmp(stress_prompt,"WAIT ",5)){int ms=atoi(stress_prompt+5);if(ms<0)ms=0;if(ms>30000)ms=30000;stress_wait_until=sceKernelGetProcessTimeWide()+(uint64_t)ms*1000;dbg_log("TEST wait_ms=%d",ms);}
  else if(!strncmp(stress_prompt,"AUTO ",5)){llama_worker_set_auto(atoi(stress_prompt+5));dbg_log("TEST auto=%d",atoi(stress_prompt+5));}

@@ -14,10 +14,12 @@ class WikipediaDocuments:
             self.cache_epoch+=1;self.http_cache.clear()
 
     def api(self,host,**params):
+        byte_limit=int(params.pop('_byte_limit',MAX_RAW))
+        if not MAX_RAW<=byte_limit<=262144:raise ValueError('document response bound')
         # Fixed public providers only. Queries cannot supply a host or URL.
         assert host in ('en.wikipedia.org','en.wikibooks.org','www.wikidata.org')
         params.update(format='json',maxlag=5)
-        key=host+'?'+urllib.parse.urlencode(params)
+        key=str(byte_limit)+':'+host+'?'+urllib.parse.urlencode(params)
         with self.http_lock:
             now=time.monotonic()
             current=getattr(self.local,'cache_epoch',self.cache_epoch)==self.cache_epoch
@@ -29,7 +31,7 @@ class WikipediaDocuments:
             try:
                 remaining=getattr(self.local,'deadline',time.monotonic()+3)-time.monotonic()
                 if remaining<=0:raise TimeoutError('retrieval deadline')
-                with urllib.request.urlopen(request,timeout=min(3,remaining),context=self.tls) as response:raw=response.read(MAX_RAW+1)
+                with urllib.request.urlopen(request,timeout=min(3,remaining),context=self.tls) as response:raw=response.read(byte_limit+1)
             except urllib.error.HTTPError as error:
                 if error.code in (429,503):
                     delay=error.headers.get('Retry-After','30')
@@ -37,7 +39,7 @@ class WikipediaDocuments:
                     raise SourceBusy('source rate limited') from None
                 raise
             finally:self.next_request=time.monotonic()+1.0
-            if len(raw)>MAX_RAW:raise ValueError('source too large')
+            if len(raw)>byte_limit:raise ValueError('source too large')
             data=json.loads(raw)
             if 'error' in data:
                 code=data['error'].get('code','unknown')

@@ -10,3 +10,6 @@ mode.bin
 model.vlp
 tokenizer.bin
 *.vpk
+
+models/
+*.onnx

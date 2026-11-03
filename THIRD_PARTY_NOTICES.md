@@ -11,3 +11,7 @@
 - Offline facts: GeoNames CC BY 4.0, PubChem/NCBI and cited primary factual sources in [references.txt](vita/references.txt). Dated snapshot, not live geopolitical advice.
 
 See [LICENSE_NOTES.md](LICENSE_NOTES.md). File-specific notices remain intact.
+
+- Relevance ranking: cross-encoder/ms-marco-MiniLM-L6-v2, Apache-2.0 as declared in the exact upstream [model card](docs/notices/relevance-model-card.md). [Pinned revision and file hashes](docs/notices/relevance-model-pin.json). Model weights are downloaded separately; the model ranks source passages and never generates chatbot answers. Python dependencies retain their upstream licenses and are installed separately from pinned requirements.
+
+- Intent classification: MoritzLaurer/deberta-v3-base-zeroshot-v2.0, MIT as declared in the exact upstream [model card](docs/notices/intent-model-card.md). [Pinned revision and file hashes](docs/notices/intent-model-pin.json). It classifies the requested action; it never generates answers. This model is downloaded separately, not redistributed in the package.

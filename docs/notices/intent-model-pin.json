@@ -1,0 +1,30 @@
+{
+  "repo": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
+  "revision": "8e7e5af5983a0ddb1a5b45a38b129ab69e2258e8",
+  "files": [
+    {
+      "file": "onnx/model.onnx",
+      "local": "model.onnx",
+      "size": 738563249,
+      "sha256": "d46fa6c1addc598abd34af8651120291f51417ddfce45b9d5f70bc32d3efa81c"
+    },
+    {
+      "file": "onnx/tokenizer.json",
+      "local": "tokenizer.json",
+      "size": 8649136,
+      "sha256": "bfead76cd475f67849a6710fdd16497f75732773e4d90e40d3b5bb5d3f031df9"
+    },
+    {
+      "file": "onnx/config.json",
+      "local": "config.json",
+      "size": 1033,
+      "sha256": "a68162c0b02cd39759732b33d26ee2868cb64701b0b9255fee4f55fd9d5609f4"
+    },
+    {
+      "file": "README.md",
+      "local": "README.md",
+      "size": 21116,
+      "sha256": "bd974d885c91d90f96183e86803e80b080ad365cb65307f2ebd9169d2646f08f"
+    }
+  ]
+}

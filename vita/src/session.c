@@ -58,7 +58,8 @@ int session_step(Session*s){
  if(s->reason!=END_NONE)return 0;if(!s->has_pending){s->reason=END_ERROR;return -1;}
  int next=s->pending;const char*piece=engine_decode(s->tokenizer,next);
  if(eos(s,next)){s->reason=END_EOS;return 0;}
- if(s->count>=s->soft&&complete(s->text,piece)){s->reason=END_SOFT;return 0;}
+ int fences=0;for(const char*p=s->text;(p=strstr(p,"```"));p+=3)fences++;
+ if(!(fences%2)&&s->count>=s->soft&&complete(s->text,piece)){s->reason=END_SOFT;return 0;}
  if(s->count>=s->hard){s->reason=END_HARD;return 0;}
  if(s->pos>=capacity(s)-2){s->reason=END_CONTEXT;return 0;} /* Reserve im_end + newline. */
  size_t used=strlen(s->text),len=strlen(piece);

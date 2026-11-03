@@ -478,7 +478,7 @@ void llama_worker_reset(void){
  online_reset_context();
  if(s_session_ready){session_reset(&s_session);memset(s_session.fed,0,sizeof(s_session.fed));memset(s_session.generated,0,sizeof(s_session.generated));memset(s_session.text,0,sizeof(s_session.text));}
  memset(s_ledger,0,sizeof(s_ledger));s_turn_count=0;s_ledger_n=0;s_last_multi=0;s_continue_job=0;
- s_online_used=0;s_online_inference_at=0;search_plan_reset();
+ s_online_used=0;s_online_inference_at=0;
  memset(s_online_title,0,sizeof(s_online_title));memset(s_online_source,0,sizeof(s_online_source));
  lock_io();memset(s_prompt,0,sizeof(s_prompt));memset(s_response,0,sizeof(s_response));unlock_io();
  snprintf(s_route_name,sizeof(s_route_name),"neutral");memset(s_source,0,sizeof(s_source));snprintf(s_path_name,sizeof(s_path_name),"neural");
@@ -488,6 +488,6 @@ void llama_worker_set_reuse(int on){s_reuse_enabled=on;}
 const char*llama_worker_end_reason(void){return s_session_ready?session_reason(s_session.reason):"ready";}
 void llama_worker_statistics(char*out,int n){SceKernelFreeMemorySizeInfo m={0};m.size=sizeof(m);sceKernelGetFreeMemorySize(&m);snprintf(out,n,"First output: %.2f s / Decode: %.2f pieces/s\nContext: %d / 512 / Reused: %d / Rebuild: %d\nResponse soft/hard: %d / %d / End: %s\nHeap: %.2f MiB / Free user: %.2f MiB\nTone: %s / Reference lookup: %llu us\nModel: LFM2.5-230M Q8 / Fixed 12 MiB KV",s_ttft,s_decode,s_session.pos,s_cache_reused,s_cache_rebuilt,s_soft_job,s_hard_job,llama_worker_end_reason(),mallinfo().uordblks/1048576.0,m.size_user/1048576.0,s_route_name,(unsigned long long)s_lookup_us);}
 
-void llama_worker_prepare_prefix(void){if(s_state!=LLAMA_WORKER_RUNNING){phase4_prefix_init();search_plan_prefix_init();}}
+void llama_worker_prepare_prefix(void){if(s_state!=LLAMA_WORKER_RUNNING){phase4_prefix_init();}}
 
 void llama_worker_set_evidence_pack(int enabled){s_evidence_pack=enabled!=0;}

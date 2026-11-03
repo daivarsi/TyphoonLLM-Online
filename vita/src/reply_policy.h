@@ -1,6 +1,6 @@
 #pragma once
 #include "session.h"
-#define REPLY_TOKEN_LIMIT 320
+#define REPLY_TOKEN_LIMIT 192
 #define REPLY_SEGMENT_LIMIT 8
 /* EOS, sentence completion, Stop, and exhausted context are terminal. Keeping
  * context exhaustion terminal avoids automatic destructive history eviction. */

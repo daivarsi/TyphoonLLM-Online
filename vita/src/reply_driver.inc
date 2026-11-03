@@ -7,9 +7,11 @@ void llama_worker_set_auto(int on){if(s_state!=LLAMA_WORKER_RUNNING)s_auto_reply
 const char*llama_worker_completion(void){return s_completion;}
 static void generate_reply(const char*prompt){
  int soft=s_soft_job,hard=s_hard_job,total=0,segments=0;
+ s_reply_limit=REPLY_TOKEN_LIMIT;s_reply_total=0;
  snprintf(s_completion,sizeof(s_completion),"Generating");
  do {
-  int remaining=REPLY_TOKEN_LIMIT-total;
+  int remaining=s_reply_limit-total;
+  s_reply_total=total;
   s_hard_job=hard<remaining?hard:remaining;
   if(s_hard_job<1)s_hard_job=1;
   s_soft_job=soft<s_hard_job?soft:s_hard_job;
@@ -18,7 +20,7 @@ static void generate_reply(const char*prompt){
   soft=s_soft_job;
   dbg_log("REPLY_SEGMENT segment=%d tokens=%d total=%d reason=%s cancel=%d",segments,s_session.count,total,session_reason(s_session.reason),s_cancel);
   if(s_state==LLAMA_WORKER_ERROR)break;
-  if(!reply_resume(s_auto_reply,s_cancel,s_session.reason,total,segments))break;
+  if(total>=s_reply_limit||!reply_resume(s_auto_reply,s_cancel,s_session.reason,total,segments))break;
   s_continue_job=1;
  }while(1);
  const char*end=s_state==LLAMA_WORKER_ERROR?"Error":s_cancel?"Stopped":
@@ -26,6 +28,5 @@ static void generate_reply(const char*prompt){
   s_session.reason==END_BUFFER?"Text limit":s_session.reason==END_ERROR?"Error":"Completed";
  snprintf(s_completion,sizeof(s_completion),"%s",end);
  dbg_log("REPLY_COMPLETE status=%s segments=%d tokens=%d auto=%d",end,segments,total,s_auto_reply);
- if(!s_cancel&&s_state!=LLAMA_WORKER_ERROR)search_plan_remember(prompt,s_session.text);
  s_soft_job=soft;s_hard_job=hard;s_continue_job=0;
 }

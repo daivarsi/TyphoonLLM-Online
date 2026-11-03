@@ -1,5 +1,7 @@
 """Question-form independent retrieval; returns documents, never final answers."""
 import collections,html,math,re,time,urllib.parse
+from wordfreq import zipf_frequency
+import snowballstemmer
 from html.parser import HTMLParser
 from service import Result,OK,NOT_FOUND,AMBIGUOUS,UNAVAILABLE,UNSUPPORTED,MAX_EVIDENCE,clean
 from wiki_documents import WikipediaDocuments
@@ -109,15 +111,32 @@ class GeneralProvider:
             if len((evidence+'\n\n'+unit).encode())<=850:evidence+='\n\n'+unit
             if len(evidence.encode())>=600:break
         return Result(OK if evidence else NOT_FOUND,title,'https://en.wikipedia.org/wiki/'+urllib.parse.quote(title.replace(' ','_')),evidence,int(time.time()),len(text.encode()))
-    def fetch(self,query):
-        started=time.monotonic();deadline=started+10
+    def fetch_context(self,message,suggestion):
+        # The original message is never replaced by a model rewrite. Every candidate
+        # document must be relevant to it, including exact-title/wiki results.
+        deadline=time.monotonic()+10;rejected=[]
+        queries=list(dict.fromkeys([compact_query(suggestion),compact_query(message),message]))
+        proposed=queries[0]
+        for query in queries:
+            if time.monotonic()>=deadline:break
+            proposal_required=query==proposed or not distinctive_request(message)
+            accept=lambda r: relevant_to_message(message,r) and (not proposal_required or relevant_to_message(suggestion,r))
+            result=self.fetch(query,deadline=deadline,accept=accept)
+            if result.status==OK:
+                if accept(result):return result
+                rejected.append(result.title)
+        return Result(NOT_FOUND,error='No relevant context for original request; rejected='+repr(rejected)[:120])
+
+    def fetch(self,query,deadline=None,accept=None):
+        started=time.monotonic();deadline=deadline or started+10
         self.backend.local.cache_epoch=self.backend.cache_epoch;self.backend.local.deadline=deadline
         # Exact document resolution is an optimization, not a question whitelist.
         try:
             page=self.backend.page(query)
             if page:
                 result=self.from_wiki(page,query)
-                if result.status in (OK,AMBIGUOUS):return result
+                if result.status==AMBIGUOUS:return result
+                if result.status==OK and (accept is None or accept(result)):return result
         except (OSError,ValueError,KeyError,TypeError):pass
         self.search.local.deadline=deadline
         rows=self.search.search(query)
@@ -132,7 +151,7 @@ class GeneralProvider:
                 parsed=urllib.parse.urlsplit(url)
                 if parsed.hostname=='en.wikipedia.org' and parsed.path.startswith('/wiki/'):
                     result=self.wiki_document(urllib.parse.unquote(parsed.path[6:]).replace('_',' '),query)
-                    if result and result.status==OK:return result
+                    if result and result.status==OK and (accept is None or accept(result)):return result
                     continue
                 raw=self.search.request(url,524288);text=raw.decode('utf-8',errors='replace')
                 recipe=StructuredRecipe();recipe.feed(text)
@@ -141,6 +160,30 @@ class GeneralProvider:
                     if not evidence:continue
                 else:
                     parser=DocumentText();parser.feed(text);evidence=rank_units(query,parser.units(),title)
-                if evidence:return Result(OK,title,url,evidence,int(time.time()),len(raw))
+                if evidence:
+                    result=Result(OK,title,url,evidence,int(time.time()),len(raw))
+                    if accept is None or accept(result):return result
+                    failures.append('irrelevant:'+title[:60])
             except (OSError,ValueError,TypeError,KeyError) as e:failures.append(type(e).__name__)
         return Result(NOT_FOUND,error=','.join(failures)[:180])
+
+
+def compact_query(text):
+    terms=list(dict.fromkeys(w for w in words(text) if len(w)>1 and zipf_frequency(w,'en')<=5))
+    return ' '.join(terms) if terms else text
+
+def distinctive_request(text):
+    return any(len(w)>1 and zipf_frequency(w,'en')<=5 for w in words(text))
+def relevance_terms(text):
+    return set(snowballstemmer.stemmer('english').stemWords([w for w in words(text) if len(w)>1]))
+
+def relevant_to_message(message,result):
+    candidates={w:zipf_frequency(w,'en') for w in words(message) if len(w)>1}
+    if not candidates:return False
+    rarest=min(candidates.values())
+    # Corpus frequency identifies the request's distinctive terms, rather than
+    # hand-written question types or subject-specific exceptions. Generic words
+    # such as "store" must not validate a document about a different object.
+    focal=relevance_terms(' '.join(w for w,f in candidates.items() if f<=rarest+.35))
+    document=relevance_terms(result.title+' '+result.evidence)
+    return bool(focal and focal<=document)

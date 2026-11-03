@@ -10,7 +10,7 @@ from pathlib import Path
 
 VERSION=2
 
-CACHE_POLICY=4
+CACHE_POLICY=11
 
 REQUEST=struct.Struct('!4sHH')
 
@@ -18,23 +18,15 @@ RESPONSE=struct.Struct('!4sHHHHIQII')
 
 MAX_QUERY=512; MAX_RAW=65536; MAX_EVIDENCE=1024
 
-MAX_QUERY=512; MAX_RAW=65536; MAX_EVIDENCE=1024
 
-MAX_QUERY=512; MAX_RAW=65536; MAX_EVIDENCE=1024
 
 OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
-OK=0; NOT_FOUND=1; AMBIGUOUS=2; UNAVAILABLE=3; MALFORMED=4; RATE_LIMITED=5; UNSUPPORTED=6
 
 class PlainText(HTMLParser):
     def __init__(self): super().__init__(convert_charrefs=True); self.parts=[]; self.skip=0
@@ -91,7 +83,7 @@ class Retrieval:
                 for key,fields in entries.items():
                     try:
                         result=Result(**fields);decode_result(result.wire())
-                        if result.status==OK and 0<=time.time()-result.timestamp<ttl and len(key.encode())<=MAX_QUERY:self.cache[key]=result
+                        if result.status==OK and 0<=time.time()-result.timestamp<ttl and len(key.encode())<=2048:self.cache[key]=result
                     except (ValueError,TypeError,KeyError):continue
                 self.trim_cache()
             except (OSError,ValueError,TypeError,KeyError):self.cache.clear()
@@ -113,18 +105,24 @@ class Retrieval:
         if self.audit:
             self.audit.parent.mkdir(parents=True,exist_ok=True)
             with self.audit.open('a',encoding='utf-8') as stream:stream.write(json.dumps({'event':'conversation_clear','epoch':self.epoch,'time':time.time()})+'\n')
-    def query(self,query):
-        if not isinstance(query,str) or not query.strip() or len(query.encode('utf-8'))>MAX_QUERY or any(ord(c)<32 for c in query):return Result(MALFORMED)
+    def query(self,query,suggestion=None,topic=""):
+        if not isinstance(query,str) or not query.strip() or len(query.encode('utf-8'))>(1024 if suggestion is not None else MAX_QUERY) or any(ord(c)<32 and c not in '\n\t' for c in query):return Result(MALFORMED)
+        if suggestion is None and any(ord(c)<32 for c in query):return Result(MALFORMED)
+        if suggestion is not None and (not isinstance(suggestion,str) or not suggestion.strip() or len(suggestion.encode())>512 or any(ord(c)<32 for c in suggestion)):return Result(MALFORMED)
         key=' '.join(query.casefold().split()).rstrip(' ?.!');started=time.monotonic()
+        if not isinstance(topic,str) or len(topic.encode())>128 or any(ord(c)<32 for c in topic):return Result(MALFORMED)
+        if suggestion is not None:key=json.dumps([query,suggestion,topic],ensure_ascii=False)
         with self.lock:
             cached=self.cache.get(key)
             epoch=self.epoch
             if cached and time.time()-cached.timestamp<self.ttl:self.cache.move_to_end(key);return dataclasses.replace(cached,elapsed_ms=0)
             self.cache.pop(key,None)
-        try:result=self.provider.fetch(query)
+        try:
+            if suggestion is not None:result=self.provider.fetch_context(query,suggestion,topic) if topic else self.provider.fetch_context(query,suggestion)
+            else:result=self.provider.fetch(query)
         except SourceBusy:result=Result(RATE_LIMITED,error="source rate limited")
         except (OSError,ValueError,KeyError,TypeError,UnicodeError) as error:result=Result(UNAVAILABLE,error=type(error).__name__+": "+str(error)[:180])
-        result.elapsed_ms=min(10000,int((time.monotonic()-started)*1000))
+        result.elapsed_ms=min(0xffffffff,int((time.monotonic()-started)*1000))
         if result.status==OK:
             # Enforce schema even for future third-party provider adapters.
             if not result.evidence or len(result.evidence.encode('utf-8'))>MAX_EVIDENCE:return Result(MALFORMED)
@@ -136,7 +134,7 @@ class Retrieval:
             with self.lock:
                 self.audit.parent.mkdir(parents=True,exist_ok=True)
                 if self.audit.exists() and self.audit.stat().st_size>2*1024*1024:self.audit.replace(self.audit.with_suffix('.previous'))
-                with self.audit.open('a',encoding='utf-8') as f:f.write(json.dumps({'query':query,**dataclasses.asdict(result)},ensure_ascii=False)+'\n')
+                with self.audit.open('a',encoding='utf-8') as f:f.write(json.dumps({'query':query,'suggestion':suggestion,'topic':topic,**dataclasses.asdict(result)},ensure_ascii=False)+'\n')
         return result
 
 def exact(sock,n):
@@ -159,11 +157,22 @@ class Handler(socketserver.BaseRequestHandler):
                 self.request.sendall(Result(OK if healthy else UNAVAILABLE,evidence='ready' if healthy else '').wire());return
             if magic==b'TYCL' and version==VERSION and size==0:
                 self.server.retrieval.clear();self.request.sendall(Result(NOT_FOUND).wire());return
-            if magic not in (b'TYRQ',b'TYRN') or version!=VERSION or not 0<size<=MAX_QUERY:
+            conversational=magic in (b'TYBQ',b'TYBN')
+            anchored=conversational or magic in (b'TYAQ',b'TYAN')
+            if magic not in (b'TYRQ',b'TYRN',b'TYAQ',b'TYAN',b'TYBQ',b'TYBN') or version!=VERSION or not 0<size<=(1670 if conversational else 1540 if anchored else MAX_QUERY):
                 self.request.sendall(Result(MALFORMED).wire());return
-            query=exact(self.request,size).decode('utf-8')
-            if magic==b'TYRN':self.server.retrieval.clear()
-            result=self.server.retrieval.query(query)
+            payload=exact(self.request,size)
+            topic=''
+            if anchored:
+                prefix=6 if conversational else 4
+                if size<prefix:self.request.sendall(Result(MALFORMED).wire());return
+                nm,nq=struct.unpack_from('!HH',payload);nt=struct.unpack_from('!H',payload,4)[0] if conversational else 0
+                if not 0<nm<=1024 or not 0<nq<=512 or nt>128 or size!=prefix+nm+nq+nt:
+                    self.request.sendall(Result(MALFORMED).wire());return
+                query=payload[prefix:prefix+nm].decode('utf-8');suggestion=payload[prefix+nm:prefix+nm+nq].decode('utf-8');topic=payload[prefix+nm+nq:].decode('utf-8')
+            else:query=payload.decode('utf-8');suggestion=None
+            if magic in (b'TYRN',b'TYAN',b'TYBN'):self.server.retrieval.clear()
+            result=self.server.retrieval.query(query,suggestion,topic)
             self.request.sendall(result.wire())
         except (OSError,EOFError,ValueError,UnicodeError):return
         finally:self.server.slots.release()
@@ -190,10 +199,12 @@ class Server(socketserver.ThreadingTCPServer):
         super().__init__(address,Handler)
 
 def main():
-    from general_retrieval import GeneralProvider
-    parser=argparse.ArgumentParser();parser.add_argument('--bind',default='127.0.0.1');parser.add_argument('--port',type=int,default=28500);parser.add_argument('--allow-ip',action='append',default=[]);parser.add_argument('--audit');parser.add_argument('--cache');parser.add_argument('--public-search',action='store_true',help='Compatibility flag; general public search is the default.');args=parser.parse_args()
+    from semantic_ranker import SemanticRanker
+    from semantic_intent import SemanticIntent
+    from semantic_documents import SemanticProvider
+    parser=argparse.ArgumentParser();parser.add_argument('--bind',default='127.0.0.1');parser.add_argument('--port',type=int,default=28500);parser.add_argument('--allow-ip',action='append',default=[]);parser.add_argument('--audit');parser.add_argument('--cache');parser.add_argument('--public-search',action='store_true',help='Compatibility flag; general public search is the default.');parser.add_argument('--ranker-model',type=Path,default=Path(__file__).resolve().parent.parent/'models/relevance');parser.add_argument('--intent-model',type=Path,default=Path(__file__).resolve().parent.parent/'models/intent');args=parser.parse_args()
     if not ipaddress.ip_address(args.bind).is_private:parser.error('trusted LAN bind only')
-    with Server((args.bind,args.port),Retrieval(provider=GeneralProvider(),audit=args.audit,cache_file=args.cache),args.allow_ip) as server:
+    with Server((args.bind,args.port),Retrieval(provider=SemanticProvider(SemanticRanker(args.ranker_model),intent=SemanticIntent(args.intent_model)),audit=args.audit,cache_file=args.cache),args.allow_ip) as server:
         print(f'retrieval listening {args.bind}:{args.port}; allowed clients={sorted(server.allowed)}',flush=True)
         server.serve_forever()
 if __name__=='__main__':

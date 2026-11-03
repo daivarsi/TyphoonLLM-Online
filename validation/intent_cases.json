@@ -1,0 +1,66 @@
+[
+  {
+    "request": "Compose a haiku about an empty railway station.",
+    "research": false
+  },
+  {
+    "request": "Make up a bedtime adventure featuring a tiny submarine.",
+    "research": false
+  },
+  {
+    "request": "Tell me about the poem Ozymandias.",
+    "research": true
+  },
+  {
+    "request": "Give me a recipe for lentil soup.",
+    "research": true
+  },
+  {
+    "request": "Write a sonnet using researched facts about Saturn.",
+    "research": true
+  },
+  {
+    "request": "Explain why Sherlock Holmes is so well known.",
+    "research": true
+  },
+  {
+    "request": "Which book introduced Bilbo Baggins?",
+    "research": true
+  },
+  {
+    "request": "Create a limerick about a sleepy astronomer.",
+    "research": false
+  },
+  {
+    "request": "Imagine a conversation between the wind and a mountain.",
+    "research": false
+  },
+  {
+    "request": "What is the difference between a comet and an asteroid?",
+    "research": true
+  },
+  {
+    "request": "How can I sew a loose button back onto a shirt?",
+    "research": true
+  },
+  {
+    "request": "Please make this clearer: The thing was done by us.",
+    "research": false
+  },
+  {
+    "request": "Hello, nice to meet you.",
+    "research": false
+  },
+  {
+    "request": "Invent an imaginary island and describe its strange customs.",
+    "research": false
+  },
+  {
+    "request": "Who wrote The Hobbit?",
+    "research": true
+  },
+  {
+    "request": "Find real examples of bioluminescence for my fantasy setting.",
+    "research": true
+  }
+]

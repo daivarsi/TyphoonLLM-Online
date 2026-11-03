@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 typedef struct {char title[129],source[385],evidence[1025];uint32_t raw_bytes,elapsed_ms;uint64_t timestamp;} RetrievalResult;
+enum { RETRIEVAL_LOCAL=1 };
+
 enum { ONLINE_OFFLINE=0, ONLINE_AUTO=1, ONLINE_FORCE=2 };
 int online_mode(void);
 void online_load_settings(void);
@@ -11,7 +13,7 @@ const char *online_status(void);
 int online_should_retrieve(const char *query);
 void online_fallback(void);
 void online_discard_reference(void);
-int retrieval_query(const char *query,RetrievalResult *out,volatile int *cancelled);
+int retrieval_query(const char *query,const char *message,RetrievalResult *out,volatile int *cancelled);
 void online_generating(int used);
 void online_complete(int used);
 void online_failure(int insufficient);
